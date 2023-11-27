@@ -3,6 +3,7 @@ import React from "react";
 import { ThemeToggle } from "./theme-provider";
 import Image from "next/image";
 import Link from "next/link";
+import Profile from "./Profile";
 
 type Props = {
   className?: string;
@@ -51,6 +52,7 @@ const Header = ({ className }: Props) => {
           </ul>
         </nav>
         <ThemeToggle />
+        <Profile />
       </div>
     </header>
   );
