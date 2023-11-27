@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className={cn(inter.className, "h-full flex flex-col")}>
+      <body className={cn(inter.className, "flex h-full flex-col")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -28,7 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Header className="flex-shrink-0 flex-grow-0" />
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="container flex-1 overflow-y-auto">{children}</main>
           <Player className="flex-shrink-0 flex-grow-0" />
         </ThemeProvider>
       </body>
