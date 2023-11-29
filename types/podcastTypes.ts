@@ -20,3 +20,6 @@ export const zMetaData = z.object({
   category: z.string(),
   language_code: z.string(),
 });
+
+export type MetaData = z.infer<typeof zMetaData>;
+export type EpisodeData = z.infer<typeof zEpisodeData>;

@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Player from "@/components/player/Player";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import { QueryProvider } from "@/lib/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,16 +22,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className={cn(inter.className, "flex h-full flex-col")}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header className="flex-shrink-0 flex-grow-0" />
-          <main className="container flex-1 overflow-y-auto">{children}</main>
-          <Player className="flex-shrink-0 flex-grow-0" />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header className="flex-shrink-0 flex-grow-0" />
+            <main className="container flex-1 overflow-y-auto">{children}</main>
+            <Player className="flex-shrink-0 flex-grow-0" />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

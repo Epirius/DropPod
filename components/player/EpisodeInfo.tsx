@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { AspectRatio } from "../ui/aspect-ratio";
 import Image from "next/image";
-import { zEpisodeData } from "@/types/podcastTypes";
+import { EpisodeData } from "@/types/podcastTypes";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 
 type EpisodeInfoProps = {
-  episodeData: z.infer<typeof zEpisodeData>;
+  episodeData: EpisodeData;
   className?: string;
 };
 

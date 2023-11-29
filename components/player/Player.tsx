@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { zEpisodeData } from "@/types/podcastTypes";
+import { EpisodeData } from "@/types/podcastTypes";
 import React, { useRef, useState } from "react";
 import { z } from "zod";
 import { create } from "zustand";
@@ -16,8 +16,8 @@ type Props = {
 };
 
 export const AudioStore = create<{
-  episodeData: z.infer<typeof zEpisodeData>;
-  updateEpisodeData: (episodeData: z.infer<typeof zEpisodeData>) => any;
+  episodeData: EpisodeData;
+  updateEpisodeData: (episodeData: EpisodeData) => any;
 }>((set) => ({
   episodeData: {
     title: "",
@@ -29,8 +29,7 @@ export const AudioStore = create<{
     episode: "",
     season: "",
   },
-  updateEpisodeData: (episodeData: z.infer<typeof zEpisodeData>) =>
-    set({ episodeData }),
+  updateEpisodeData: (episodeData: EpisodeData) => set({ episodeData }),
 }));
 
 const Player = ({ className }: Props) => {
