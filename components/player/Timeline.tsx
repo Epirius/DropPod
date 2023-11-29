@@ -39,7 +39,7 @@ const Timeline = ({ playerRef, className }: TimelineProps) => {
         </span>
       )}
       <Slider
-        className="h-5 w-60 sm:w-80"
+        className="h-5 w-[60vw]"
         value={currentPlayerTime}
         defaultValue={[0]}
         step={1.0}
