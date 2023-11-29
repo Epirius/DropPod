@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { TriangleUpIcon, TriangleDownIcon } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
 
 interface SpeedControllerProps {
   playerRef: React.RefObject<HTMLAudioElement>;
+  className?: string;
 }
 
-const SpeedController = ({ playerRef }: SpeedControllerProps) => {
+const SpeedController = ({ playerRef, className }: SpeedControllerProps) => {
   const [speed, setSpeed] = useState<number>(1);
 
   useEffect(() => {
@@ -52,7 +54,12 @@ const SpeedController = ({ playerRef }: SpeedControllerProps) => {
   };
 
   return (
-    <div className="group flex h-8 w-24 items-center justify-center sm:hover:justify-between">
+    <div
+      className={cn(
+        "group flex h-8 w-24 items-center justify-center sm:hover:justify-between",
+        className,
+      )}
+    >
       <div className="ml-1 hidden sm:block">
         <Button
           className="translate-x-8 transition duration-300 ease-in-out group-hover:transform-none"

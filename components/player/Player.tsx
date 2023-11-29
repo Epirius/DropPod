@@ -39,7 +39,7 @@ const Player = ({ className }: Props) => {
   const episodeData = AudioStore((state) => state.episodeData);
 
   return (
-    <div className={cn("h-20 border-t-2 border-border", className)}>
+    <div className={cn("h-28 w-full border-t-2 border-border", className)}>
       <audio
         hidden={true}
         src={episodeData.audio_url ?? undefined}
@@ -48,12 +48,22 @@ const Player = ({ className }: Props) => {
         onPlaying={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
-      <div className="flex h-full w-full items-center justify-center gap-10">
-        <SpeedController playerRef={player} />
-        <PlayButton isPlaying={isPlaying} playerRef={player} />
-        <VolumeControls playerRef={player} />
-        <Timeline playerRef={player} />
-        <EpisodeInfo episodeData={episodeData} />
+      <div className="grid h-full w-full grid-cols-5 grid-rows-2 items-center justify-items-center">
+        <SpeedController playerRef={player} className="col-start-2" />
+        <PlayButton
+          isPlaying={isPlaying}
+          playerRef={player}
+          className="col-start-3"
+        />
+        <VolumeControls playerRef={player} className="" />
+        <EpisodeInfo
+          episodeData={episodeData}
+          className="col-start-4 sm:col-start-5 sm:row-span-2 sm:mr-4 sm:h-20 sm:w-20 sm:justify-self-end"
+        />
+        <Timeline
+          playerRef={player}
+          className="col-start-2 col-end-5 row-start-2"
+        />
       </div>
     </div>
   );

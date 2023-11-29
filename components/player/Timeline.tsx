@@ -2,12 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Slider } from "../ui/slider";
+import { cn } from "@/lib/utils";
 
 type TimelineProps = {
   playerRef: React.RefObject<HTMLAudioElement>;
+  className?: string;
 };
 
-const Timeline = ({ playerRef }: TimelineProps) => {
+const Timeline = ({ playerRef, className }: TimelineProps) => {
   const [currentPlayerTime, setCurrentPlayerTime] = useState<number[]>([0]);
   const [durationTime, setDurationTime] = useState<number>(NaN);
 
@@ -30,14 +32,14 @@ const Timeline = ({ playerRef }: TimelineProps) => {
   };
 
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className={cn("flex items-center gap-2 text-sm", className)}>
       {!isNaN(durationTime) && (
         <span aria-label="Current playback time">
           {secondsToTime(currentPlayerTime[0])}
         </span>
       )}
       <Slider
-        className="h-5 w-60"
+        className="h-5 w-60 sm:w-80"
         value={currentPlayerTime}
         defaultValue={[0]}
         step={1.0}

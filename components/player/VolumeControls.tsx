@@ -6,12 +6,14 @@ import {
   SpeakerQuietIcon,
   SpeakerLoudIcon,
 } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
 
 interface VolumeProps {
   playerRef: React.RefObject<HTMLAudioElement>;
+  className?: string;
 }
 
-const VolumeControls = ({ playerRef }: VolumeProps) => {
+const VolumeControls = ({ playerRef, className }: VolumeProps) => {
   const [volume, setVolume] = useState<number>(1.0);
   const [muted, setMuted] = useState<boolean>(false);
 
@@ -40,7 +42,7 @@ const VolumeControls = ({ playerRef }: VolumeProps) => {
   };
 
   return (
-    <div className="hidden items-center gap-1 sm:flex">
+    <div className={cn("hidden items-center gap-1 sm:flex", className)}>
       {muted ? <SpeakerOffIcon /> : <SpeakerQuietIcon />}
       <Slider
         onValueChange={(e: number[]) => {

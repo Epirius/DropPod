@@ -5,9 +5,10 @@ import { Button } from "../ui/button";
 type PlayButtonProps = {
   isPlaying: boolean;
   playerRef: React.RefObject<HTMLAudioElement>;
+  className?: string;
 };
 
-const PlayButton = ({ isPlaying, playerRef }: PlayButtonProps) => {
+const PlayButton = ({ isPlaying, playerRef, className }: PlayButtonProps) => {
   const handlePlayButtonClick = () => {
     if (!isPlaying) {
       playerRef.current?.play();
@@ -21,6 +22,7 @@ const PlayButton = ({ isPlaying, playerRef }: PlayButtonProps) => {
       size="roundedIcon"
       onClick={handlePlayButtonClick}
       aria-label={isPlaying ? "Pause button" : "Play button"}
+      className={className}
     >
       {isPlaying ? <PauseIcon /> : <PlayIcon />}
     </Button>
