@@ -8,6 +8,7 @@ import { create } from "zustand";
 import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
+import SpeedController from "./SpeedController";
 
 type Props = {
   className?: string;
@@ -45,11 +46,9 @@ const Player = ({ className }: Props) => {
         title={episodeData.title ?? undefined}
         onPlaying={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        // onTimeUpdate={(e) => refreshAudioData(e)}
-        // onVolumeChange={(e) => refreshAudioData(e)}
-        // onRateChange={(e) => refreshAudioData(e)}
       />
       <div className="flex h-full w-full items-center justify-center gap-10">
+        <SpeedController playerRef={player} />
         <PlayButton isPlaying={isPlaying} playerRef={player} />
         <VolumeControls playerRef={player} />
         <Timeline playerRef={player} />
