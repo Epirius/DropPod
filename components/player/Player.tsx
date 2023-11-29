@@ -2,10 +2,11 @@
 
 import { cn } from "@/lib/utils";
 import { zEpisodeData } from "@/types/podcastTypes";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { z } from "zod";
 import { create } from "zustand";
 import PlayButton from "./PlayButton";
+import VolumeControls from "./VolumeControls";
 
 type Props = {
   className?: string;
@@ -35,7 +36,7 @@ const Player = ({ className }: Props) => {
   const episodeData = AudioStore((state) => state.episodeData);
 
   return (
-    <nav className={cn("h-20 border-t-2 border-border", className)}>
+    <div className={cn("h-20 border-t-2 border-border", className)}>
       <audio
         hidden={true}
         src={episodeData.audio_url ?? undefined}
@@ -49,8 +50,9 @@ const Player = ({ className }: Props) => {
       />
       <div className="flex h-full w-full items-center justify-center">
         <PlayButton isPlaying={isPlaying} playerRef={player} />
+        <VolumeControls playerRef={player} />
       </div>
-    </nav>
+    </div>
   );
 };
 
