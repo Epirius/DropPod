@@ -9,6 +9,7 @@ import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
 import SpeedController from "./SpeedController";
+import EpisodeInfo from "./EpisodeInfo";
 
 type Props = {
   className?: string;
@@ -52,6 +53,7 @@ const Player = ({ className }: Props) => {
         <PlayButton isPlaying={isPlaying} playerRef={player} />
         <VolumeControls playerRef={player} />
         <Timeline playerRef={player} />
+        <EpisodeInfo episodeData={episodeData} />
       </div>
     </div>
   );
