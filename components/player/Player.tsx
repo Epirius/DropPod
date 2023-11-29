@@ -7,6 +7,7 @@ import { z } from "zod";
 import { create } from "zustand";
 import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
+import Timeline from "./Timeline";
 
 type Props = {
   className?: string;
@@ -48,9 +49,10 @@ const Player = ({ className }: Props) => {
         // onVolumeChange={(e) => refreshAudioData(e)}
         // onRateChange={(e) => refreshAudioData(e)}
       />
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-full w-full items-center justify-center gap-10">
         <PlayButton isPlaying={isPlaying} playerRef={player} />
         <VolumeControls playerRef={player} />
+        <Timeline playerRef={player} />
       </div>
     </div>
   );
