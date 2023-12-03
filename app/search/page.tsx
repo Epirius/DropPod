@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { ChangeEvent } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import Spinner from "@/components/ui/spinner";
+import PodcastCard from "@/components/PodcastCard";
 
 const Search = () => {
   const router = useRouter();
@@ -44,7 +45,7 @@ const Search = () => {
         autoFocus
       />
       {data?.map((podcast: MetaData) => {
-        return <p key={podcast.guid}>{podcast.title}</p>;
+        return <PodcastCard data={podcast} variant="card" key={podcast.guid} />;
       })}
     </div>
   );
