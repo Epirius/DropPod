@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import React from "react";
-import { ThemeToggle } from "./theme-provider";
+import { ThemeToggle } from "../theme-provider";
 import Image from "next/image";
 import Link from "next/link";
 import Profile from "./Profile";
+import Hamburger from "./Hamburger";
 
 type Props = {
   className?: string;
@@ -38,10 +39,10 @@ const Header = ({ className }: Props) => {
             alt="droppod logo"
             className="h-[50px] w-[50px]"
           />
-          <h1>DropPod</h1>
+          <h1 className="hidden sm:block">DropPod</h1>
         </div>
       </Link>
-      <div className="ml-auto flex items-center gap-4">
+      <div className="ml-auto hidden items-center gap-4 md:flex">
         <nav>
           <ul className="flex items-center gap-4">
             {navLinks.map((navLink) => (
@@ -53,6 +54,9 @@ const Header = ({ className }: Props) => {
         </nav>
         <ThemeToggle />
         <Profile />
+      </div>
+      <div className=" ml-auto flex items-center md:hidden">
+        <Hamburger navLinks={navLinks} />
       </div>
     </header>
   );
