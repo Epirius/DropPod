@@ -50,6 +50,9 @@ dependencies:
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
+  interweave:
+    specifier: ^13.1.0
+    version: 13.1.0(react@18.2.0)
   lucide-react:
     specifier: ^0.293.0
     version: 0.293.0(react@18.2.0)
@@ -1736,6 +1739,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /escape-html@1.0.3:
+    resolution: {integrity: sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==}
+    dev: false
+
   /escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
@@ -2302,6 +2309,15 @@ packages:
       hasown: 2.0.0
       side-channel: 1.0.4
     dev: true
+
+  /interweave@13.1.0(react@18.2.0):
+    resolution: {integrity: sha512-JIDq0+2NYg0cgL7AB26fBcV0yZdiJvPDBp+aF6k8gq6Cr1kH5Gd2/Xqn7j8z+TGb8jCWZn739jzalCz+nPYwcA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      escape-html: 1.0.3
+      react: 18.2.0
+    dev: false
 
   /invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
