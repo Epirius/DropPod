@@ -19,18 +19,23 @@ const PodcastHeader = ({ slug }: { slug: string }) => {
   });
   if (!data) return <Spinner />;
   return (
-    <div className="flex">
+    <div className="flex flex-col gap-8 md:flex-row">
       <Image
         src={data.image_url}
         alt="Podcast cover art"
         width={300}
         height={300}
-        className="h-80 w-80 rounded-xl"
+        className="h-40 w-40 self-center rounded-xl sm:h-80 sm:w-80 md:self-start"
         priority
       />
-      <div>
-        <h1 className="text-3xl font-bold">{data.title}</h1>
-        <Markup content={data.description} />
+      <div className="flex flex-col gap-4">
+        <h1 className="self-center text-center text-3xl font-bold md:self-start md:text-left">
+          {data.title}
+        </h1>
+        <Markup
+          content={data.description}
+          className="self-center text-center md:self-start md:text-left"
+        />
       </div>
     </div>
   );

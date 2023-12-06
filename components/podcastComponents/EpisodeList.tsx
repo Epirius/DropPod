@@ -73,17 +73,20 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
   return (
     <div className="flex flex-row items-center gap-2 py-4">
       {(episode || season) && (
-        <Badge variant="info" className="font-bold">
+        <Badge
+          variant="info"
+          className="hidden flex-shrink-0 font-bold sm:block"
+        >
           <p>
             <span>{season ? `S${season} ` : ""}</span>
             <span>{episode ? `E${episode}` : ""}</span>
           </p>
         </Badge>
       )}
-      <p className="text-sm sm:truncate sm:text-lg">{title}</p>
+      <p className="text-sm  sm:text-base md:text-lg">{title}</p>
       <div className="ml-auto flex items-center gap-8">
         {date && (
-          <p>
+          <p className="hidden md:block">
             {new Date(date).toLocaleString("en-US", {
               month: "short",
               day: "2-digit",
@@ -98,7 +101,6 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
           variant="outline"
         />
       </div>
-      {/* <Separator.Root className="bg-BLACK_CYNICAL  my-4 rounded-sm py-0.5" /> */}
     </div>
   );
 };
