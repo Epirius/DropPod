@@ -24,7 +24,10 @@ export default async function RootLayout({
   const session = await getServerSession();
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className={cn(inter.className, "flex h-full flex-col")}>
+      <body
+        className={cn(inter.className, "flex h-full flex-col")}
+        suppressHydrationWarning
+      >
         <SessionProvider session={session}>
           <QueryProvider>
             <ThemeProvider
@@ -34,8 +37,8 @@ export default async function RootLayout({
               disableTransitionOnChange
             >
               <Header className="flex-shrink-0 flex-grow-0" />
-              <main className="container flex-1 overflow-y-auto">
-                {children}
+              <main className="flex-1 overflow-y-auto py-8">
+                <div className="container">{children}</div>
               </main>
               <Player className="flex-shrink-0 flex-grow-0" />
             </ThemeProvider>

@@ -15,7 +15,7 @@ export interface PodcastCardProps {
 
 const PodcastCard = ({ data, variant = "card" }: PodcastCardProps) => {
   return (
-    <Link legacyBehavior href="/">
+    <Link legacyBehavior href={`/podcast/${data.guid}`}>
       <div
         className={clsx(
           "group mb-6 text-ellipsis break-normal hover:cursor-pointer",
