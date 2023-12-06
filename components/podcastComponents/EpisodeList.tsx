@@ -1,13 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Spinner from "../ui/spinner";
 import { EpisodeData, zEpisodeData } from "@/types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { AudioStore } from "../player/Player";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
-  const updateEpisodeData = AudioStore((state) => state.updateEpisodeData);
   const { data, isLoading, error } = useQuery({
     queryKey: ["podcastPage", "episode", slug],
     queryFn: async () => {
@@ -22,11 +20,7 @@ const EpisodeList = ({ slug }: { slug: string }) => {
   return (
     <div>
       {data.map((episode) => (
-        <EpisodeItem
-          episode={episode}
-          key={episode.guid}
-          updateEpisodeData={updateEpisodeData}
-        />
+        <EpisodeItem episode={episode} key={episode.guid} />
       ))}
     </div>
   );
@@ -36,19 +30,47 @@ export default EpisodeList;
 
 type EpisodeItemProps = {
   episode: EpisodeData;
-  updateEpisodeData: (episode: EpisodeData) => void;
 };
 
-const EpisodeItem = ({ episode, updateEpisodeData }: EpisodeItemProps) => {
+const EpisodeItem = ({ episode }: EpisodeItemProps) => {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  useEffect(() => {
+    const handlePlaying = (event: Event) => {
+      const e = event as CustomEvent<EpisodeData>;
+      setIsPlaying(e.detail.audio_url === episode.audio_url);
+    };
+
+    const handlePause = (event: Event) => {
+      const e = event as CustomEvent<EpisodeData>;
+      setIsPlaying(false);
+    };
+
+    window.addEventListener("playing", handlePlaying);
+    window.addEventListener("pause", handlePause);
+    return () => {
+      window.removeEventListener("playing", handlePlaying);
+      window.removeEventListener("pause", handlePause);
+    };
+  }, [setIsPlaying, episode.audio_url]);
+
+  const handleClick = () => {
+    window.dispatchEvent(
+      new CustomEvent("updateEpisodeData", {
+        detail: episode,
+      }),
+    );
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-row justify-between px-4">
         <p className="text-sm sm:truncate sm:text-xl">{episode.title}</p>
         <button
           className="pl-4 text-sm sm:pl-8 sm:text-base"
-          onClick={() => updateEpisodeData(episode)}
+          onClick={handleClick}
         >
-          play
+          {isPlaying ? "pause" : "play"}
         </button>
       </div>
       {/* <Separator.Root className="bg-BLACK_CYNICAL  my-4 rounded-sm py-0.5" /> */}

@@ -2,9 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { EpisodeData } from "@/types/podcastTypes";
-import React, { useRef, useState } from "react";
-import { z } from "zod";
-import { create } from "zustand";
+import React, { useEffect, useRef, useState } from "react";
 import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
@@ -15,11 +13,12 @@ type Props = {
   className?: string;
 };
 
-export const AudioStore = create<{
-  episodeData: EpisodeData;
-  updateEpisodeData: (episodeData: EpisodeData) => any;
-}>((set) => ({
-  episodeData: {
+type playState = "playing" | "pause";
+
+const Player = ({ className }: Props) => {
+  const player = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [episodeData, setEpisodeData] = useState<EpisodeData>({
     title: "",
     description: "",
     audio_url: "",
@@ -28,14 +27,43 @@ export const AudioStore = create<{
     image_url: "",
     episode: "",
     season: "",
-  },
-  updateEpisodeData: (episodeData: EpisodeData) => set({ episodeData }),
-}));
+  });
 
-const Player = ({ className }: Props) => {
-  const player = useRef<HTMLAudioElement>(null);
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const episodeData = AudioStore((state) => state.episodeData);
+  const handlePlayPauseChange = (change: playState) => {
+    setIsPlaying(change === "playing");
+    window.dispatchEvent(
+      new CustomEvent(change, {
+        detail: episodeData,
+      }),
+    );
+  };
+
+  useEffect(() => {
+    if (!player.current) return;
+    void player.current.play();
+  }, [episodeData]);
+
+  useEffect(() => {
+    const handleEpisodeData = async (event: Event) => {
+      const data = (event as CustomEvent<EpisodeData>).detail;
+      if (data.audio_url === episodeData.audio_url) {
+        if (player.current?.paused) {
+          await player.current?.play();
+          return;
+        } else {
+          void player.current?.pause();
+          return;
+        }
+      }
+      if (!player.current) return;
+      player.current.pause();
+      setEpisodeData(data);
+    };
+    window.addEventListener("updateEpisodeData", handleEpisodeData);
+    return () => {
+      window.removeEventListener("updateEpisodeData", handleEpisodeData);
+    };
+  }, [episodeData.audio_url, player, setEpisodeData]);
 
   return (
     <div className={cn("h-28 w-full border-t-2 border-border", className)}>
@@ -44,8 +72,9 @@ const Player = ({ className }: Props) => {
         src={episodeData.audio_url ?? undefined}
         ref={player}
         title={episodeData.title ?? undefined}
-        onPlaying={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
+        onPlaying={() => handlePlayPauseChange("playing")}
+        onPause={() => handlePlayPauseChange("pause")}
+        onLoadStart={() => handlePlayPauseChange("pause")}
       />
       <div className="grid h-full w-full grid-cols-5 grid-rows-2 items-center justify-items-center">
         <SpeedController playerRef={player} className="col-start-2" />
