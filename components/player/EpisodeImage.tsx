@@ -10,7 +10,7 @@ type EpisodeInfoProps = {
   className?: string;
 };
 
-const EpisodeInfo = ({ episodeData, className }: EpisodeInfoProps) => {
+const EpisodeImage = ({ episodeData, className }: EpisodeInfoProps) => {
   const [hidden, setHidden] = React.useState(false);
   useEffect(() => {
     setHidden(false);
@@ -32,4 +32,4 @@ const EpisodeInfo = ({ episodeData, className }: EpisodeInfoProps) => {
   );
 };
 
-export default EpisodeInfo;
+export default EpisodeImage;
