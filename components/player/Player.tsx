@@ -77,14 +77,17 @@ const Player = ({ className }: Props) => {
         onPause={() => handlePlayPauseChange("pause")}
         onLoadStart={() => handlePlayPauseChange("pause")}
       />
-      <div className="grid h-full w-full grid-cols-5 grid-rows-2 items-center justify-items-center">
-        <SpeedController playerRef={player} className="col-start-2" />
+      <div className="grid-rows-[2fr 1fr] grid h-full w-full grid-cols-5 items-center justify-items-center">
+        <SpeedController
+          playerRef={player}
+          className="col-start-2 self-end pb-2"
+        />
         <PlayButton
           isPlaying={isPlaying}
           handlePlayButtonClick={handlePlayButtonClick}
-          className="col-start-3"
+          className="col-start-3 self-end"
         />
-        <VolumeControls playerRef={player} className="" />
+        <VolumeControls playerRef={player} className="self-end pb-[0.7rem]" />
         <EpisodeInfo
           episodeData={episodeData}
           className="col-start-4 sm:col-start-5 sm:row-span-2 sm:mr-4 sm:h-20 sm:w-20 sm:justify-self-end"
