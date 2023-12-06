@@ -54,11 +54,6 @@ const Player = ({ className }: Props) => {
     };
   }, [episodeData.audio_url, player, setEpisodeData]);
 
-  useEffect(() => {
-    if (!player.current) return;
-    void player.current.play();
-  }, [episodeData]);
-
   const handlePlayButtonClick = async () => {
     if (!player.current) return;
     player.current.paused
@@ -76,6 +71,7 @@ const Player = ({ className }: Props) => {
         onPlaying={() => handlePlayPauseChange("playing")}
         onPause={() => handlePlayPauseChange("pause")}
         onLoadStart={() => handlePlayPauseChange("pause")}
+        autoPlay
       />
       <div className="grid-rows-[2fr 1fr] grid h-full w-full grid-cols-5 items-center justify-items-center">
         <SpeedController
