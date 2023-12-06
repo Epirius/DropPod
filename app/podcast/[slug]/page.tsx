@@ -10,7 +10,7 @@ const PodcastPage = ({ params }: PodcastPageProps) => {
   const { slug } = params;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-8">
       <PodcastHeader slug={slug} />
       <EpisodeList slug={slug} />
     </div>

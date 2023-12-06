@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import PlayButton from "../player/PlayButton";
 import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -21,8 +22,12 @@ const EpisodeList = ({ slug }: { slug: string }) => {
   if (!data) return <Spinner />;
   return (
     <div>
+      <Separator />
       {data.map((episode) => (
-        <EpisodeItem episode={episode} key={episode.guid} />
+        <>
+          <EpisodeItem data={episode} key={episode.guid} />
+          <Separator />
+        </>
       ))}
     </div>
   );
@@ -31,16 +36,17 @@ const EpisodeList = ({ slug }: { slug: string }) => {
 export default EpisodeList;
 
 type EpisodeItemProps = {
-  episode: EpisodeData;
+  data: EpisodeData;
 };
 
-const EpisodeItem = ({ episode }: EpisodeItemProps) => {
+const EpisodeItem = ({ data }: EpisodeItemProps) => {
+  const { episode, title, date, audio_url, guid, season, description } = data;
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   useEffect(() => {
     const handlePlaying = (event: Event) => {
       const e = event as CustomEvent<EpisodeData>;
-      setIsPlaying(e.detail.audio_url === episode.audio_url);
+      setIsPlaying(e.detail.audio_url === data.audio_url);
     };
 
     const handlePause = (event: Event) => {
@@ -54,34 +60,44 @@ const EpisodeItem = ({ episode }: EpisodeItemProps) => {
       window.removeEventListener("playing", handlePlaying);
       window.removeEventListener("pause", handlePause);
     };
-  }, [setIsPlaying, episode.audio_url]);
+  }, [setIsPlaying, data.audio_url]);
 
   const handleClick = () => {
     window.dispatchEvent(
       new CustomEvent("updateEpisodeData", {
-        detail: episode,
+        detail: data,
       }),
     );
   };
 
   return (
-    <div className="flex flex-row items-center gap-2 px-4 py-2">
-      {(episode.episode || episode.season) && (
+    <div className="flex flex-row items-center gap-2 py-4">
+      {(episode || season) && (
         <Badge variant="info" className="font-bold">
           <p>
-            <span>{episode.season ? `S${episode.season} ` : ""}</span>
-            <span>{episode.episode ? `E${episode.episode}` : ""}</span>
+            <span>{season ? `S${season} ` : ""}</span>
+            <span>{episode ? `E${episode}` : ""}</span>
           </p>
         </Badge>
       )}
-      <p className="text-sm sm:truncate sm:text-xl">{episode.title}</p>
+      <p className="text-sm sm:truncate sm:text-lg">{title}</p>
+      <div className="ml-auto flex items-center gap-8">
+        {date && (
+          <p>
+            {new Date(date).toLocaleString("en-US", {
+              month: "short",
+              day: "2-digit",
+              year: "numeric",
+            })}
+          </p>
+        )}
 
-      <PlayButton
-        isPlaying={isPlaying}
-        handlePlayButtonClick={handleClick}
-        variant="outline"
-        className="ml-auto"
-      />
+        <PlayButton
+          isPlaying={isPlaying}
+          handlePlayButtonClick={handleClick}
+          variant="outline"
+        />
+      </div>
       {/* <Separator.Root className="bg-BLACK_CYNICAL  my-4 rounded-sm py-0.5" /> */}
     </div>
   );
