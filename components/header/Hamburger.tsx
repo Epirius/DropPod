@@ -22,8 +22,9 @@ type HamburgerProps = {
 
 const Hamburger = ({ navLinks }: HamburgerProps) => {
   const { data: session, status } = useSession();
+  const [open, setOpen] = React.useState(false);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="icon">
           <HamburgerMenuIcon />
@@ -42,7 +43,9 @@ const Hamburger = ({ navLinks }: HamburgerProps) => {
             {navLinks &&
               navLinks.map((navLink) => (
                 <li key={navLink.name} className="hover:underline">
-                  <Link href={navLink.link}>{navLink.name}</Link>
+                  <Link href={navLink.link} onClick={() => setOpen(false)}>
+                    {navLink.name}
+                  </Link>
                 </li>
               ))}
           </ul>

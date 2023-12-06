@@ -7,7 +7,7 @@ import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
 import SpeedController from "./SpeedController";
-import EpisodeInfo from "./EpisodeInfo";
+import EpisodeImage from "./EpisodeImage";
 
 type Props = {
   className?: string;
@@ -84,7 +84,7 @@ const Player = ({ className }: Props) => {
           className="col-start-3 self-end"
         />
         <VolumeControls playerRef={player} className="self-end pb-[0.7rem]" />
-        <EpisodeInfo
+        <EpisodeImage
           episodeData={episodeData}
           className="col-start-4 sm:col-start-5 sm:row-span-2 sm:mr-4 sm:h-20 sm:w-20 sm:justify-self-end"
         />
