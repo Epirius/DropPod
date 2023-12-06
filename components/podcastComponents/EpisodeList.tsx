@@ -5,6 +5,7 @@ import { EpisodeData, zEpisodeData } from "@/types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import PlayButton from "../player/PlayButton";
+import { Badge } from "../ui/badge";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -64,16 +65,23 @@ const EpisodeItem = ({ episode }: EpisodeItemProps) => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row justify-between px-4">
-        <p className="text-sm sm:truncate sm:text-xl">{episode.title}</p>
-        <button
-          className="pl-4 text-sm sm:pl-8 sm:text-base"
-          onClick={handleClick}
-        >
-          <PlayButton isPlaying={isPlaying} variant="secondary" />
-        </button>
-      </div>
+    <div className="flex flex-row items-center gap-2 px-4 py-2">
+      {(episode.episode || episode.season) && (
+        <Badge variant="info" className="font-bold">
+          <p>
+            <span>{episode.season ? `S${episode.season} ` : ""}</span>
+            <span>{episode.episode ? `E${episode.episode}` : ""}</span>
+          </p>
+        </Badge>
+      )}
+      <p className="text-sm sm:truncate sm:text-xl">{episode.title}</p>
+
+      <PlayButton
+        isPlaying={isPlaying}
+        handlePlayButtonClick={handleClick}
+        variant="outline"
+        className="ml-auto"
+      />
       {/* <Separator.Root className="bg-BLACK_CYNICAL  my-4 rounded-sm py-0.5" /> */}
     </div>
   );
