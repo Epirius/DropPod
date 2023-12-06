@@ -4,6 +4,7 @@ import Spinner from "../ui/spinner";
 import { EpisodeData, zEpisodeData } from "@/types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
+import PlayButton from "../player/PlayButton";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -70,7 +71,7 @@ const EpisodeItem = ({ episode }: EpisodeItemProps) => {
           className="pl-4 text-sm sm:pl-8 sm:text-base"
           onClick={handleClick}
         >
-          {isPlaying ? "pause" : "play"}
+          <PlayButton isPlaying={isPlaying} variant="secondary" />
         </button>
       </div>
       {/* <Separator.Root className="bg-BLACK_CYNICAL  my-4 rounded-sm py-0.5" /> */}

@@ -39,24 +39,13 @@ const Player = ({ className }: Props) => {
   };
 
   useEffect(() => {
-    if (!player.current) return;
-    void player.current.play();
-  }, [episodeData]);
-
-  useEffect(() => {
     const handleEpisodeData = async (event: Event) => {
       const data = (event as CustomEvent<EpisodeData>).detail;
       if (data.audio_url === episodeData.audio_url) {
-        if (player.current?.paused) {
-          await player.current?.play();
-          return;
-        } else {
-          void player.current?.pause();
-          return;
-        }
+        handlePlayButtonClick();
+        return;
       }
-      if (!player.current) return;
-      player.current.pause();
+      player.current?.pause();
       setEpisodeData(data);
     };
     window.addEventListener("updateEpisodeData", handleEpisodeData);
@@ -64,6 +53,18 @@ const Player = ({ className }: Props) => {
       window.removeEventListener("updateEpisodeData", handleEpisodeData);
     };
   }, [episodeData.audio_url, player, setEpisodeData]);
+
+  useEffect(() => {
+    if (!player.current) return;
+    void player.current.play();
+  }, [episodeData]);
+
+  const handlePlayButtonClick = async () => {
+    if (!player.current) return;
+    player.current.paused
+      ? await player.current.play()
+      : void player.current.pause();
+  };
 
   return (
     <div className={cn("h-28 w-full border-t-2 border-border", className)}>
@@ -80,7 +81,7 @@ const Player = ({ className }: Props) => {
         <SpeedController playerRef={player} className="col-start-2" />
         <PlayButton
           isPlaying={isPlaying}
-          playerRef={player}
+          handlePlayButtonClick={handlePlayButtonClick}
           className="col-start-3"
         />
         <VolumeControls playerRef={player} className="" />
