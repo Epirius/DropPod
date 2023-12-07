@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/lib/QueryProvider";
 import { getServerSession } from "next-auth";
-import SessionProvider from "@/lib/SessionProvider";
+import { AuthProvider } from "@/lib/SessionProvider";
+import { authOptions } from "@/server/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,14 +22,14 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body
         className={cn(inter.className, "flex h-full flex-col")}
         suppressHydrationWarning
       >
-        <SessionProvider session={session}>
+        <AuthProvider session={session}>
           <QueryProvider>
             <ThemeProvider
               attribute="class"
@@ -43,7 +44,7 @@ export default async function RootLayout({
               <Player className="flex-shrink-0 flex-grow-0" />
             </ThemeProvider>
           </QueryProvider>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   );
