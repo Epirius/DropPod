@@ -37,11 +37,11 @@ export default async function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <Header className="flex-shrink-0 flex-grow-0" />
-              <main className="flex-1 overflow-y-auto py-8">
+              <Header className="box-border flex-shrink-0 flex-grow-0" />
+              <main className="box-border flex-1 overflow-y-auto py-8">
                 <div className="container">{children}</div>
               </main>
-              <Player className="flex-shrink-0 flex-grow-0" />
+              <Player className="box-border flex-shrink-0 flex-grow-0" />
             </ThemeProvider>
           </QueryProvider>
         </AuthProvider>
