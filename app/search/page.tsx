@@ -25,7 +25,10 @@ const Search = () => {
     searchTerm: string,
   ): Promise<MetaData[]> => {
     if (searchTerm.length === 0) return [];
-    const res = await fetch(`/api2/podcast/search?search=${searchTerm}`);
+    const quantity = 20;
+    const res = await fetch(
+      `/api2/podcast/search?search=${searchTerm}&quantity=${quantity}`,
+    );
     return zMetaData.array().parse(await res.json());
   };
 
