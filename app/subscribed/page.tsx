@@ -1,5 +1,6 @@
 "use client";
 import PodcastCard from "@/components/PodcastCard";
+import PodcastDisplay from "@/components/PodcastDisplay";
 import { zMetaData } from "@/types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -30,10 +31,7 @@ const FavouritePage = () => {
   return (
     <div>
       <h1>My Podcast</h1>
-      {data &&
-        data.map((podcast) => {
-          return <PodcastCard key={podcast.guid} data={podcast} />;
-        })}
+      {data && <PodcastDisplay data={data} />}
     </div>
   );
 };
