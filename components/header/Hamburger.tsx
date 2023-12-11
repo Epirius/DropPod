@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { SignInOut, UserAvatar } from "./Profile";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
+import { ThemeToggle } from "../theme-provider";
 
 type HamburgerProps = {
   navLinks?: {
@@ -51,7 +52,10 @@ const Hamburger = ({ navLinks }: HamburgerProps) => {
           </ul>
 
           <Separator className="my-4" />
-          <SignInOut />
+          <div className="flex ">
+            <SignInOut />
+            <ThemeToggle className="ml-auto" />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
