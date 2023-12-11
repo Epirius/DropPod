@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import React, { ChangeEvent } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PodcastDisplay from "@/components/PodcastDisplay";
+import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
 const Search = () => {
   const router = useRouter();
@@ -35,14 +37,23 @@ const Search = () => {
     );
   };
   return (
-    <div>
-      <input
-        type="text"
-        value={searchTerm ?? ""}
-        onChange={updateQueryParamas}
-        placeholder="Search"
-        autoFocus
-      />
+    <div className="flex flex-col gap-4">
+      <div className="flex">
+        <input
+          type="search"
+          value={searchTerm ?? ""}
+          onChange={updateQueryParamas}
+          placeholder="Search"
+          autoFocus
+          className="w-1/2 rounded-3xl rounded-r-none border-2 border-r-0 px-4 sm:w-80"
+        />
+        <Button
+          variant="secondary"
+          className=" rounded-3xl rounded-l-none border-2 border-l-0"
+        >
+          <MagnifyingGlassIcon />
+        </Button>
+      </div>
       <PodcastDisplay data={data} variant="card" />
     </div>
   );
