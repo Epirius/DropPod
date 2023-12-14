@@ -3,17 +3,19 @@ import { MetaData, zMetaData } from "@/types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PodcastDisplay from "@/components/PodcastDisplay";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import Spinner from "@/components/ui/spinner";
 
 const Search = () => {
   const router = useRouter();
-  const searchTerm = useSearchParams().get("q") ?? "";
+  const searchTerm = decodeURIComponent(useSearchParams().get("q") ?? "");
+  const [searchInput, setSearchInput] = useState(searchTerm);
 
-  const debouncedFilter = useDebounce(searchTerm, 500);
+  const debouncedFilter = useDebounce(searchTerm, 10);
   const { data, isLoading, error } = useQuery({
     queryKey: ["searching", debouncedFilter],
     queryFn: () => fetchSearchResults(debouncedFilter),
@@ -32,30 +34,38 @@ const Search = () => {
     return zMetaData.array().parse(await res.json());
   };
 
-  const updateQueryParamas = (e: ChangeEvent<HTMLInputElement>) => {
+  const debouncedSearchInput = useDebounce(
+    encodeURIComponent(searchInput),
+    300,
+  );
+  useEffect(() => {
     void router.replace(
-      e.target.value.length > 0
-        ? `?q=${e.target.value.replace(/ /g, "%20")}`
+      debouncedSearchInput.length > 0
+        ? `?q=${debouncedSearchInput.replace(/ /g, "%20")}`
         : "?",
     );
-  };
+  });
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex">
-        <input
-          type="search"
-          value={searchTerm ?? ""}
-          onChange={updateQueryParamas}
-          placeholder="Search"
-          autoFocus
-          className="w-1/2 rounded-3xl rounded-r-none border-2 border-r-0 px-4 sm:w-80"
-        />
-        <Button
-          variant="secondary"
-          className=" rounded-3xl rounded-l-none border-2 border-l-0"
-        >
-          <MagnifyingGlassIcon />
-        </Button>
+      <div className="flex gap-8">
+        <div className="flex">
+          <input
+            type="search"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search"
+            autoFocus
+            className="w-1/2 rounded-3xl rounded-r-none border-2 border-r-0 px-4 sm:w-80"
+          />
+          <Button
+            variant="secondary"
+            className=" rounded-3xl rounded-l-none border-2 border-l-0"
+          >
+            <MagnifyingGlassIcon />
+          </Button>
+        </div>
+        {isLoading && <Spinner size="sm" />}
       </div>
       <PodcastDisplay data={data} variant="card" />
     </div>
