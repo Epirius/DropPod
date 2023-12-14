@@ -15,11 +15,10 @@ const Search = () => {
   const searchTerm = decodeURIComponent(useSearchParams().get("q") ?? "");
   const [searchInput, setSearchInput] = useState(searchTerm);
 
-  const debouncedFilter = useDebounce(searchTerm, 10);
   const { data, isLoading, error } = useQuery({
-    queryKey: ["searching", debouncedFilter],
-    queryFn: () => fetchSearchResults(debouncedFilter),
-    enabled: Boolean(debouncedFilter),
+    queryKey: ["searching"],
+    queryFn: () => fetchSearchResults(searchTerm),
+    enabled: searchTerm.length > 0,
     staleTime: 60 * 1000 * 24,
   });
 
@@ -38,13 +37,14 @@ const Search = () => {
     encodeURIComponent(searchInput),
     300,
   );
+
   useEffect(() => {
     void router.replace(
       debouncedSearchInput.length > 0
         ? `?q=${debouncedSearchInput.replace(/ /g, "%20")}`
         : "?",
     );
-  });
+  }, [debouncedSearchInput, router]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,6 +67,10 @@ const Search = () => {
         </div>
         {isLoading && <Spinner size="sm" />}
       </div>
+      {error && <p className="text-red-500">{error.message}</p>}
+      {data && data.length === 0 && (
+        <p>No results found for &quot;{searchTerm}&quot;</p>
+      )}
       <PodcastDisplay data={data} variant="card" />
     </div>
   );
