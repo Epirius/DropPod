@@ -42,7 +42,8 @@ const PodcastCard = ({
               src={data.image_url}
               alt={`conver art for: ${data.title}`}
               fill={true}
-              className=" transition duration-100 ease-in-out group-hover:scale-105"
+              sizes="15rem"
+              className=" aspect-square transition duration-100 ease-in-out group-hover:scale-105"
               priority={true}
             />
           </div>
