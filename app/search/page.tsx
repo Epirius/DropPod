@@ -1,9 +1,9 @@
 "use client";
 import { MetaData, zMetaData } from "@/types/podcastTypes";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
 import PodcastDisplay from "@/components/PodcastDisplay";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
@@ -14,21 +14,33 @@ const Search = () => {
   const router = useRouter();
   const searchTerm = decodeURIComponent(useSearchParams().get("q") ?? "");
   const [searchInput, setSearchInput] = useState(searchTerm);
+  const page_length = 20;
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["searching"],
-    queryFn: () => fetchSearchResults(searchTerm),
-    enabled: searchTerm.length > 0,
-    staleTime: 60 * 1000 * 24,
-  });
+  const { data, isLoading, isFetching, fetchNextPage, hasNextPage, error } =
+    useInfiniteQuery({
+      queryKey: ["searching", "infinite", searchTerm],
+      getNextPageParam: (
+        lastPage: MetaData[],
+        allPages,
+        lastPageParam,
+        allPageParams,
+      ) => {
+        if (lastPage.length < page_length) return undefined;
+        return lastPageParam + 1;
+      },
+      initialPageParam: 1,
+      queryFn: ({ pageParam = 1 }) => fetchSearchResults(searchTerm, pageParam),
+      enabled: searchTerm.length > 0,
+      staleTime: 60 * 1000 * 24,
+    });
 
   const fetchSearchResults = async (
     searchTerm: string,
+    page: number,
   ): Promise<MetaData[]> => {
     if (searchTerm.length === 0) return [];
-    const quantity = 20;
     const res = await fetch(
-      `/api2/podcast/search?search=${searchTerm}&quantity=${quantity}`,
+      `/api2/podcast/search?search=${searchTerm}&page_length=${page_length}&page_number=${page}`,
     );
     return zMetaData.array().parse(await res.json());
   };
@@ -65,13 +77,16 @@ const Search = () => {
             <MagnifyingGlassIcon />
           </Button>
         </div>
-        {isLoading && <Spinner size="sm" />}
       </div>
       {error && <p className="text-red-500">{error.message}</p>}
-      {data && data.length === 0 && (
+      {data && data.pages.flat().length === 0 && (
         <p>No results found for &quot;{searchTerm}&quot;</p>
       )}
-      <PodcastDisplay data={data} variant="card" />
+      <PodcastDisplay data={data?.pages.flat() ?? []} variant="card" />
+      {hasNextPage && !isFetching && (
+        <button onClick={() => fetchNextPage()}>Load more</button>
+      )}
+      {isFetching && <Spinner size="sm" className="self-center" />}
     </div>
   );
 };
