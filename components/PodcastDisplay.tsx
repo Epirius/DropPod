@@ -16,6 +16,7 @@ const PodcastDisplay = ({
   variant = "card",
   className,
 }: PodcastDisplayProps) => {
+  let filteredData = removeDuplicates(data ?? []);
   return (
     <div
       className={cn(
@@ -25,7 +26,7 @@ const PodcastDisplay = ({
         className,
       )}
     >
-      {data?.map((podcast: MetaData) => {
+      {filteredData.map((podcast: MetaData) => {
         return (
           <PodcastCard
             data={podcast}
@@ -39,6 +40,15 @@ const PodcastDisplay = ({
       })}
     </div>
   );
+};
+
+const removeDuplicates = (data: MetaData[]) => {
+  const seen = new Set();
+  return data.filter((podcast) => {
+    const duplicate = seen.has(podcast.guid);
+    seen.add(podcast.guid);
+    return !duplicate;
+  });
 };
 
 export default PodcastDisplay;
