@@ -1,9 +1,9 @@
 "use client";
 import PodcastDisplay from "@/components/PodcastDisplay";
+import Spinner from "@/components/ui/spinner";
 import Category from "@/lib/categories";
 import { MetaData, zMetaData } from "@/types/podcastTypes";
-import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 
@@ -13,18 +13,32 @@ type CategoryPageProps = {
 
 const CategoryPage = ({ params }: CategoryPageProps) => {
   const { slug } = params;
+  const page_length = 20;
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["category", slug],
-    queryFn: () => fetchCategoryResults(slug),
-    staleTime: 60 * 1000 * 24,
-  });
+  const { data, isLoading, isFetching, fetchNextPage, hasNextPage, error } =
+    useInfiniteQuery({
+      queryKey: ["category", "infinite", slug],
+      getNextPageParam: (
+        lastPage: MetaData[],
+        allPages,
+        lastPageParam,
+        allPageParams,
+      ) => {
+        if (lastPage.length < page_length) return undefined;
+        return lastPageParam + 1;
+      },
+      initialPageParam: 1,
+      queryFn: ({ pageParam = 1 }) => fetchCategoryResults(slug, pageParam),
+      staleTime: 60 * 1000 * 24,
+    });
 
-  const fetchCategoryResults = async (slug: string): Promise<MetaData[]> => {
+  const fetchCategoryResults = async (
+    slug: string,
+    page: number,
+  ): Promise<MetaData[]> => {
     const languageCode = "en";
-    const quantity = 12;
     const res = await fetch(
-      `/api2/podcast/list?category=${slug}&lang=${languageCode}&quantity=${quantity}`,
+      `/api2/podcast/list?category=${slug}&lang=${languageCode}&page_length=${page_length}&page_number=${page}`,
     );
     return zMetaData.array().parse(await res.json());
   };
@@ -54,7 +68,11 @@ const CategoryPage = ({ params }: CategoryPageProps) => {
           back
         </Link>
       </div>
-      {data && <PodcastDisplay data={data} />}
+      {data && <PodcastDisplay data={data.pages.flat() ?? []} />}
+      {hasNextPage && !isFetching && (
+        <button onClick={() => fetchNextPage()}>Load more</button>
+      )}
+      {isFetching && <Spinner size="sm" className="self-center" />}
     </div>
   );
 };

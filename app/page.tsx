@@ -13,9 +13,9 @@ export default function Home() {
 
   const fetchCategoryResults = async (slug: string): Promise<MetaData[]> => {
     const languageCode = "en";
-    const quantity = 12;
+    const page_length = 12;
     const res = await fetch(
-      `/api2/podcast/list?category=${slug}&lang=${languageCode}&quantity=${quantity}`,
+      `/api2/podcast/list?category=${slug}&lang=${languageCode}&page_length=${page_length}`,
     );
     return zMetaData.array().parse(await res.json());
   };
