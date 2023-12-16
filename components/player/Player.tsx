@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { EpisodeData } from "@/types/podcastTypes";
+import { EpisodeData } from "@/@types/podcastTypes";
 import React, { useEffect, useRef, useState } from "react";
 import PlayButton from "./PlayButton";
 import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
 import SpeedController from "./SpeedController";
 import EpisodeImage from "./EpisodeImage";
+import PlaybackQueue from "./PlaybackQueue";
 
 type Props = {
   className?: string;
@@ -74,6 +75,7 @@ const Player = ({ className }: Props) => {
         autoPlay
       />
       <div className="grid-rows-[2fr 1fr] grid h-full w-full grid-cols-5 items-center justify-items-center">
+        <PlaybackQueue />
         <SpeedController
           playerRef={player}
           className="col-start-2 self-end pb-2"

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import Spinner from "../ui/spinner";
-import { EpisodeData, zEpisodeData } from "@/types/podcastTypes";
+import { EpisodeData, zEpisodeData } from "@/@types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import PlayButton from "../player/PlayButton";

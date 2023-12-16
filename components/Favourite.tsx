@@ -4,7 +4,7 @@ import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { zMetaData } from "@/types/podcastTypes";
+import { zMetaData } from "@/@types/podcastTypes";
 import Spinner from "./ui/spinner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
