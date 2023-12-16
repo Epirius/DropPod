@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { Button } from "../ui/button";
 import { LayersIcon } from "@radix-ui/react-icons";
+import { TooltipWrapper } from "../ui/tooltip";
 
 const PlaybackQueue = () => {
   const [queue, setQueue] = useLocalStorage("playbackQueue", [] as string[]);
@@ -30,9 +31,11 @@ const PlaybackQueue = () => {
   }, [queue, setQueue]);
 
   return (
-    <Button onClick={() => console.log(queue)}>
-      <LayersIcon />
-    </Button>
+    <TooltipWrapper text="playback queue">
+      <Button onClick={() => console.log(queue)}>
+        <LayersIcon />
+      </Button>
+    </TooltipWrapper>
   );
 };
 
