@@ -40,14 +40,13 @@ const Player = ({ className }: Props) => {
   };
 
   useEffect(() => {
-    const handleEpisodeData = async (event: Event) => {
-      const data = (event as CustomEvent<EpisodeData>).detail;
-      if (data.audio_url === episodeData.audio_url) {
+    const handleEpisodeData = async ({ detail }: CustomEvent<EpisodeData>) => {
+      if (detail.audio_url === episodeData.audio_url) {
         handlePlayButtonClick();
         return;
       }
       player.current?.pause();
-      setEpisodeData(data);
+      setEpisodeData(detail);
     };
     window.addEventListener("updateEpisodeData", handleEpisodeData);
     return () => {

@@ -44,13 +44,11 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   useEffect(() => {
-    const handlePlaying = (event: Event) => {
-      const e = event as CustomEvent<EpisodeData>;
-      setIsPlaying(e.detail.audio_url === data.audio_url);
+    const handlePlaying = ({ detail }: CustomEvent<EpisodeData>) => {
+      setIsPlaying(detail.audio_url === data.audio_url);
     };
 
-    const handlePause = (event: Event) => {
-      const e = event as CustomEvent<EpisodeData>;
+    const handlePause = (_event: CustomEvent<EpisodeData>) => {
       setIsPlaying(false);
     };
 
@@ -64,7 +62,7 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
 
   const handleClick = () => {
     window.dispatchEvent(
-      new CustomEvent("updateEpisodeData", {
+      new CustomEvent<EpisodeData>("updateEpisodeData", {
         detail: data,
       }),
     );
