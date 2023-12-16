@@ -5,10 +5,14 @@ declare global {
     updateEpisodeData: CustomEvent<EpisodeData>;
     playing: CustomEvent<EpisodeData>;
     pause: CustomEvent<EpisodeData>;
+    pushToPlaybackQueue: CustomEvent<{
+      episode: EpisodeData;
+      position: "front" | "back";
+    }>;
   }
   interface Window {
     //adds definition to Document, but you can do the same with HTMLElement
-    addEventListener<K extends keyof CustomEventMap>(
+    addEventListener<K extends keyof WindowEventMap>(
       type: K,
       listener: (this: Window, ev: WindowEventMap[K]) => void,
       options?: boolean | AddEventListenerOptions,

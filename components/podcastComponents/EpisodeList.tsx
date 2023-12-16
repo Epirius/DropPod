@@ -7,6 +7,7 @@ import { z } from "zod";
 import PlayButton from "../player/PlayButton";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -24,10 +25,10 @@ const EpisodeList = ({ slug }: { slug: string }) => {
     <div>
       <Separator />
       {data.map((episode) => (
-        <>
-          <EpisodeItem data={episode} key={episode.guid} />
+        <div key={episode.guid}>
+          <EpisodeItem data={episode} />
           <Separator />
-        </>
+        </div>
       ))}
     </div>
   );
@@ -68,6 +69,17 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
     );
   };
 
+  const addToPlaybackQueue = (position: "front" | "back") => {
+    window.dispatchEvent(
+      new CustomEvent<{
+        episode: EpisodeData;
+        position: "front" | "back";
+      }>("pushToPlaybackQueue", {
+        detail: { episode: data, position },
+      }),
+    );
+  };
+
   return (
     <div className="flex flex-row items-center gap-2 py-4">
       {(episode || season) && (
@@ -83,6 +95,8 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
       )}
       <p className="text-sm  sm:text-base md:text-lg">{title}</p>
       <div className="ml-auto flex items-center gap-8">
+        <Button onClick={() => addToPlaybackQueue("front")}>front</Button>
+        <Button onClick={() => addToPlaybackQueue("back")}>back</Button>
         {date && (
           <p className="hidden md:block">
             {new Date(date).toLocaleString("en-US", {
