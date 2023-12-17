@@ -31,7 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { zEpisodeData, zMetaData } from "@/@types/podcastTypes";
 import Image from "next/image";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon, DragHandleHorizontalIcon } from "@radix-ui/react-icons";
 
 export type PlaybackQueueItem = {
   podcastGuid: string;
@@ -124,7 +124,7 @@ const PlaybackQueue = () => {
           <DialogTitle>Playing next</DialogTitle>
         </DialogHeader>
         {queue.length < 1 && <p>Queue is empty</p>}
-        <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-scroll">
+        <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-auto">
           <DndContext
             collisionDetection={closestCenter}
             onDragEnd={onDragEnd}
@@ -203,22 +203,23 @@ const QueueItem = ({
           className="aspect-square h-8 w-8 shrink-0 rounded-md"
         />
         {episode?.title}
-        <Button ref={setNodeRef} {...listeners}>
-          Drag
-        </Button>
-        <Button
-          variant="secondary"
-          size="icon"
-          className="z-50 ml-auto mr-1 shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log("clicked");
-            deleteItem(item);
-          }}
-          onMouseDown={(e) => e.preventDefault()}
-        >
-          <Cross2Icon />
-        </Button>
+        <div className="ml-auto mr-1 flex shrink-0 gap-2">
+          <Button ref={setNodeRef} {...listeners} variant="outline" size="icon">
+            <DragHandleHorizontalIcon />
+          </Button>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("clicked");
+              deleteItem(item);
+            }}
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <Cross2Icon />
+          </Button>
+        </div>
       </div>
     </div>
   );
