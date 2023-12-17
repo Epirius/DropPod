@@ -3,6 +3,13 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { Button } from "../ui/button";
 import { LayersIcon } from "@radix-ui/react-icons";
 import { TooltipWrapper } from "../ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 const PlaybackQueue = () => {
   const [queue, setQueue] = useLocalStorage("playbackQueue", [] as string[]);
@@ -31,11 +38,25 @@ const PlaybackQueue = () => {
   }, [queue, setQueue]);
 
   return (
-    <TooltipWrapper text="playback queue">
-      <Button onClick={() => console.log(queue)}>
-        <LayersIcon />
-      </Button>
-    </TooltipWrapper>
+    <Dialog>
+      <TooltipWrapper text="playback queue">
+        <DialogTrigger asChild>
+          <Button variant="secondary" className="rounded-full">
+            <LayersIcon />
+          </Button>
+        </DialogTrigger>
+      </TooltipWrapper>
+      <DialogContent className="">
+        <DialogHeader>
+          <DialogTitle>Playing next</DialogTitle>
+        </DialogHeader>
+        <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-scroll">
+          {queue.map((guid) => (
+            <div key={guid}>{guid}</div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
