@@ -13,11 +13,12 @@ import {
 import {
   DndContext,
   DragEndEvent,
-  closestCenter,
-  useSensors,
-  useSensor,
-  PointerSensor,
   KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -92,8 +93,18 @@ const PlaybackQueue = () => {
     }
   };
 
-  const sensor = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 5,
+        tolerance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -115,9 +126,10 @@ const PlaybackQueue = () => {
         {queue.length < 1 && <p>Queue is empty</p>}
         <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-scroll">
           <DndContext
-            sensors={sensor}
             collisionDetection={closestCenter}
             onDragEnd={onDragEnd}
+            sensors={sensors}
+            autoScroll={{ threshold: { x: 0, y: 0.2 } }}
           >
             <SortableContext
               items={queue.map((item) => item.episodeGuid)}
@@ -181,7 +193,7 @@ const QueueItem = ({
     transform: CSS.Transform.toString(transform),
   };
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div style={style} {...attributes}>
       <div className="flex items-center gap-1">
         <Image
           src={episode?.image_url ?? podcastData?.image_url ?? ""}
@@ -191,6 +203,9 @@ const QueueItem = ({
           className="aspect-square h-8 w-8 shrink-0 rounded-md"
         />
         {episode?.title}
+        <Button ref={setNodeRef} {...listeners}>
+          Drag
+        </Button>
         <Button
           variant="secondary"
           size="icon"
