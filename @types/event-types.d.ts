@@ -1,4 +1,5 @@
 import { EpisodeData } from "@/@types/podcastTypes";
+import { PlaybackQueueItem } from "@/components/player/PlaybackQueue";
 
 declare global {
   interface WindowEventMap {
@@ -6,7 +7,7 @@ declare global {
     playing: CustomEvent<EpisodeData>;
     pause: CustomEvent<EpisodeData>;
     pushToPlaybackQueue: CustomEvent<{
-      episode: EpisodeData;
+      item: PlaybackQueueItem;
       position: "front" | "back";
     }>;
   }

@@ -26,7 +26,7 @@ const EpisodeList = ({ slug }: { slug: string }) => {
       <Separator />
       {data.map((episode) => (
         <div key={episode.guid}>
-          <EpisodeItem data={episode} />
+          <EpisodeItem data={episode} podcastSlug={slug} />
           <Separator />
         </div>
       ))}
@@ -38,9 +38,10 @@ export default EpisodeList;
 
 type EpisodeItemProps = {
   data: EpisodeData;
+  podcastSlug: string;
 };
 
-const EpisodeItem = ({ data }: EpisodeItemProps) => {
+const EpisodeItem = ({ data, podcastSlug }: EpisodeItemProps) => {
   const { episode, title, date, audio_url, guid, season, description } = data;
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -70,14 +71,20 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
   };
 
   const addToPlaybackQueue = (position: "front" | "back") => {
-    window.dispatchEvent(
-      new CustomEvent<{
-        episode: EpisodeData;
-        position: "front" | "back";
-      }>("pushToPlaybackQueue", {
-        detail: { episode: data, position },
-      }),
+    if (!guid) {
+      console.error("guid is undefined for: ", title);
+      return;
+    }
+    const event: WindowEventMap["pushToPlaybackQueue"] = new CustomEvent(
+      "pushToPlaybackQueue",
+      {
+        detail: {
+          item: { podcastGuid: podcastSlug, episodeGuid: guid },
+          position,
+        },
+      },
     );
+    window.dispatchEvent(event);
   };
 
   return (

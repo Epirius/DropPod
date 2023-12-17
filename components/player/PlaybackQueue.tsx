@@ -18,24 +18,35 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+export type PlaybackQueueItem = {
+  podcastGuid: string;
+  episodeGuid: string;
+};
+
 const PlaybackQueue = () => {
-  const [queue, setQueue] = useLocalStorage("playbackQueue", [] as string[]);
+  const [queue, setQueue] = useLocalStorage(
+    "playbackQueue",
+    [] as PlaybackQueueItem[],
+  );
 
   useEffect(() => {
     const pushToQueue = ({
-      detail: { episode, position },
+      detail: { item, position },
     }: WindowEventMap["pushToPlaybackQueue"]) => {
-      if (!episode.guid) {
-        console.error("Episode guid is required to add to queue");
-        return;
-      }
-      if (queue.includes(episode.guid)) {
+      const { podcastGuid, episodeGuid } = item;
+      if (
+        queue.some(
+          (item) =>
+            item.episodeGuid === episodeGuid &&
+            item.podcastGuid === podcastGuid,
+        )
+      ) {
         return;
       }
       if (position === "front") {
-        setQueue([episode.guid, ...queue]);
+        setQueue([item, ...queue]);
       } else {
-        setQueue([...queue, episode.guid]);
+        setQueue([...queue, item]);
       }
     };
     window.addEventListener("pushToPlaybackQueue", pushToQueue);
@@ -47,11 +58,15 @@ const PlaybackQueue = () => {
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = queue.findIndex((guid) => guid === active.id);
-      const newIndex = queue.findIndex((guid) => guid === over?.id);
+      const oldIndex = queue.findIndex((i) => i.episodeGuid === active.id);
+      const newIndex = queue.findIndex((i) => i.episodeGuid === over?.id);
       const newQueue = [...queue];
-      newQueue.splice(oldIndex, 1);
-      newQueue.splice(newIndex, 0, active.id.toString());
+      const item = newQueue.splice(oldIndex, 1);
+      if (item.length < 1) {
+        console.error("item not found in queue");
+        return;
+      }
+      newQueue.splice(newIndex, 0, item[0]);
       setQueue(newQueue);
     }
   };
@@ -72,11 +87,11 @@ const PlaybackQueue = () => {
         <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-scroll">
           <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
             <SortableContext
-              items={queue}
+              items={queue.map((item) => item.episodeGuid)}
               strategy={verticalListSortingStrategy}
             >
-              {queue.map((guid) => (
-                <QueueItem key={guid} guid={guid} />
+              {queue.map((item) => (
+                <QueueItem key={item.episodeGuid} item={item} />
               ))}
             </SortableContext>
           </DndContext>
@@ -86,16 +101,16 @@ const PlaybackQueue = () => {
   );
 };
 
-const QueueItem = ({ guid }: { guid: string }) => {
+const QueueItem = ({ item }: { item: PlaybackQueueItem }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: guid });
+    useSortable({ id: item.episodeGuid });
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
   };
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {guid}
+      {item.episodeGuid}
     </div>
   );
 };
