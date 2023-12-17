@@ -10,6 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { DndContext, DragEndEvent, closestCenter } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const PlaybackQueue = () => {
   const [queue, setQueue] = useLocalStorage("playbackQueue", [] as string[]);
@@ -37,6 +44,18 @@ const PlaybackQueue = () => {
     };
   }, [queue, setQueue]);
 
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      const oldIndex = queue.findIndex((guid) => guid === active.id);
+      const newIndex = queue.findIndex((guid) => guid === over?.id);
+      const newQueue = [...queue];
+      newQueue.splice(oldIndex, 1);
+      newQueue.splice(newIndex, 0, active.id.toString());
+      setQueue(newQueue);
+    }
+  };
+
   return (
     <Dialog>
       <TooltipWrapper text="playback queue">
@@ -51,12 +70,33 @@ const PlaybackQueue = () => {
           <DialogTitle>Playing next</DialogTitle>
         </DialogHeader>
         <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-scroll">
-          {queue.map((guid) => (
-            <div key={guid}>{guid}</div>
-          ))}
+          <DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <SortableContext
+              items={queue}
+              strategy={verticalListSortingStrategy}
+            >
+              {queue.map((guid) => (
+                <QueueItem key={guid} guid={guid} />
+              ))}
+            </SortableContext>
+          </DndContext>
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+const QueueItem = ({ guid }: { guid: string }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: guid });
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {guid}
+    </div>
   );
 };
 
