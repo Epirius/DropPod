@@ -49,19 +49,13 @@ const PlaybackQueue = () => {
       detail: { item, position },
     }: WindowEventMap["pushToPlaybackQueue"]) => {
       const { podcastGuid, episodeGuid } = item;
-      if (
-        queue.some(
-          (item) =>
-            item.episodeGuid === episodeGuid &&
-            item.podcastGuid === podcastGuid,
-        )
-      ) {
-        return;
-      }
+      const filteredQueue = queue.filter(
+        (item) => item.episodeGuid !== episodeGuid,
+      );
       if (position === "front") {
-        setQueue([item, ...queue]);
+        setQueue([item, ...filteredQueue]);
       } else {
-        setQueue([...queue, item]);
+        setQueue([...filteredQueue, item]);
       }
     };
     window.addEventListener("pushToPlaybackQueue", pushToQueue);
