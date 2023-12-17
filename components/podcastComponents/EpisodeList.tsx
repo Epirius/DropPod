@@ -8,6 +8,11 @@ import PlayButton from "../player/PlayButton";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { CardStackPlusIcon } from "@radix-ui/react-icons";
+import { TooltipWrapper } from "../ui/tooltip";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { PinTopIcon, PinBottomIcon } from "@radix-ui/react-icons";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -101,11 +106,42 @@ const EpisodeItem = ({ data, podcastSlug }: EpisodeItemProps) => {
         </Badge>
       )}
       <p className="text-sm  sm:text-base md:text-lg">{title}</p>
-      <div className="ml-auto flex items-center gap-8">
-        <Button onClick={() => addToPlaybackQueue("front")}>front</Button>
-        <Button onClick={() => addToPlaybackQueue("back")}>back</Button>
+      <div className="ml-auto flex items-center gap-6">
+        <Dialog>
+          <TooltipWrapper text="Add to queue">
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <CardStackPlusIcon />
+              </Button>
+            </DialogTrigger>
+          </TooltipWrapper>
+          <DialogContent>
+            <div className="flex flex-col gap-4 px-8 py-4">
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="flex gap-2"
+                  onClick={() => addToPlaybackQueue("front")}
+                >
+                  <PinTopIcon />
+                  <p>Add to next</p>
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="flex gap-2"
+                  onClick={() => addToPlaybackQueue("back")}
+                >
+                  <PinBottomIcon />
+                  <p>Add to last</p>
+                </Button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
         {date && (
-          <p className="hidden md:block">
+          <p className="hidden w-16 md:block">
             {new Date(date).toLocaleString("en-US", {
               month: "short",
               day: "2-digit",
