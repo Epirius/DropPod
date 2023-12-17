@@ -71,10 +71,8 @@ const PlaybackQueue = () => {
   }, [queue, setQueue]);
 
   const deleteItem = (item: PlaybackQueueItem) => {
-    console.log(queue);
     const newQueue = queue.filter((i) => i.episodeGuid !== item.episodeGuid);
     setQueue(newQueue);
-    console.log(queue);
   };
 
   const onDragEnd = (event: DragEndEvent) => {
@@ -119,7 +117,7 @@ const PlaybackQueue = () => {
           </Button>
         </DialogTrigger>
       </TooltipWrapper>
-      <DialogContent className="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Playing next</DialogTitle>
         </DialogHeader>
@@ -210,12 +208,9 @@ const QueueItem = ({
           <Button
             variant="secondary"
             size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log("clicked");
+            onClick={() => {
               deleteItem(item);
             }}
-            onMouseDown={(e) => e.preventDefault()}
           >
             <Cross2Icon />
           </Button>
