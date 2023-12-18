@@ -3,7 +3,7 @@ import PodcastDisplay from "@/components/PodcastDisplay";
 import Spinner from "@/components/ui/spinner";
 import Category from "@/lib/categories";
 import { MetaData, zMetaData } from "@/@types/podcastTypes";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 

@@ -1,4 +1,3 @@
-"use client";
 import { MetaData } from "@/@types/podcastTypes";
 import React from "react";
 import PodcastCard, { variant } from "./PodcastCard";

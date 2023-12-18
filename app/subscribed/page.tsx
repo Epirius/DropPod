@@ -1,5 +1,4 @@
 "use client";
-import PodcastCard from "@/components/PodcastCard";
 import PodcastDisplay from "@/components/PodcastDisplay";
 import { zMetaData } from "@/@types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
