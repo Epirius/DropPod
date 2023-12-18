@@ -74,7 +74,7 @@ const Player = ({ className }: Props) => {
         autoPlay
       />
       <div className="grid-rows-[2fr 1fr] grid h-full w-full grid-cols-5 items-center justify-items-center">
-        <PlaybackQueue />
+        <PlaybackQueue playerRef={player} />
         <SpeedController
           playerRef={player}
           className="col-start-2 self-end pb-2"

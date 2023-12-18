@@ -28,8 +28,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
-import { zEpisodeData, zMetaData } from "@/@types/podcastTypes";
+import { set, z } from "zod";
+import { EpisodeData, zEpisodeData, zMetaData } from "@/@types/podcastTypes";
 import Image from "next/image";
 import { Cross2Icon, DragHandleHorizontalIcon } from "@radix-ui/react-icons";
 
@@ -38,7 +38,11 @@ export type PlaybackQueueItem = {
   episodeGuid: string;
 };
 
-const PlaybackQueue = () => {
+type PlaybackQueueProps = {
+  playerRef: React.RefObject<HTMLAudioElement>;
+};
+
+const PlaybackQueue = ({ playerRef }: PlaybackQueueProps) => {
   const [queue, setQueue] = useLocalStorage(
     "playbackQueue",
     [] as PlaybackQueueItem[],
@@ -68,6 +72,65 @@ const PlaybackQueue = () => {
     const newQueue = queue.filter((i) => i.episodeGuid !== item.episodeGuid);
     setQueue(newQueue);
   };
+
+  const firstEpisode = useQuery({
+    queryKey: ["PlaybackQueue", "episode", queue[0]?.podcastGuid],
+    queryFn: async () => {
+      const res = await fetch(`/api2/podcast/episode/${queue[0]?.podcastGuid}`);
+      if (!res.ok) throw new Error("Network response was not ok");
+      const data = z.array(zEpisodeData).parse(await res.json());
+      if (!data) throw new Error("Data parsing was not ok");
+      return data;
+    },
+    staleTime: 60 * 1000 * 24,
+  });
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const handleFinishedEpisode = () => {
+      const nextEpisode = queue[0];
+      if (!nextEpisode) return;
+      new Promise<EpisodeData>((resolve, reject) => {
+        const intervalId = setInterval(() => {
+          if (!firstEpisode.isLoading) {
+            clearInterval(intervalId);
+            if (!firstEpisode.data || firstEpisode.error) reject("no data");
+            const episode = firstEpisode.data?.find(
+              (e) => e.guid === nextEpisode.episodeGuid,
+            );
+            if (!episode) {
+              reject("no episode");
+            } else {
+              resolve(episode);
+            }
+          }
+        }, 100);
+
+        const timeoutId = setTimeout(() => {
+          clearTimeout(timeoutId);
+          reject("timeout");
+        }, 3000);
+      })
+        .then((episode: EpisodeData) => {
+          window.dispatchEvent(
+            new CustomEvent<EpisodeData>("updateEpisodeData", {
+              detail: episode,
+            }),
+          );
+          setQueue(queue.slice(1));
+        })
+        .catch((err) => {
+          console.error("Playing next episode failed: ", err);
+        });
+    };
+
+    player.addEventListener("ended", handleFinishedEpisode);
+    return () => {
+      player.removeEventListener("ended", handleFinishedEpisode);
+    };
+  }, [queue, playerRef, setQueue, firstEpisode]);
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
