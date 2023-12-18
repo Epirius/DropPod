@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { Button } from "../../ui/button";
 import { LayersIcon } from "@radix-ui/react-icons";
@@ -65,8 +65,8 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
     };
   }, [queue, setQueue]);
 
-  const deleteItem = (item: PlaybackQueueItem) => {
-    const newQueue = queue.filter((i) => i.episodeUrl !== item.episodeUrl);
+  const deleteItem = (episodeUrl: string) => {
+    const newQueue = queue.filter((i) => i.episodeUrl !== episodeUrl);
     setQueue(newQueue);
   };
 
@@ -128,6 +128,21 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
       player.removeEventListener("ended", handleFinishedEpisode);
     };
   }, [queue, playerRef, setQueue, firstEpisode]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    const removePlayingEpisode = () => {
+      const episodeUrl = player.currentSrc;
+      deleteItem(episodeUrl);
+    };
+
+    player.addEventListener("loadedmetadata", removePlayingEpisode);
+    return () => {
+      player.removeEventListener("loadedmetadata", removePlayingEpisode);
+    };
+  }, [deleteItem, playerRef]);
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

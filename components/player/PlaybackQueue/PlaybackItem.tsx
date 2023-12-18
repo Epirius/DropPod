@@ -20,7 +20,7 @@ const QueueItem = ({
   deleteItem,
 }: {
   item: PlaybackQueueItem;
-  deleteItem: (item: PlaybackQueueItem) => void;
+  deleteItem: (episodeUrl: string) => void;
 }) => {
   const {
     data: podcastData,
@@ -59,7 +59,7 @@ const QueueItem = ({
   };
 
   const playEpisode = () => {
-    deleteItem(item);
+    deleteItem(item.episodeUrl);
     window.dispatchEvent(
       new CustomEvent<EpisodeData>("updateEpisodeData", {
         detail: episode,
@@ -116,7 +116,7 @@ const QueueItem = ({
             variant="secondary"
             size="iconSmall"
             onClick={() => {
-              deleteItem(item);
+              deleteItem(item.episodeUrl);
             }}
           >
             <Cross2Icon />
