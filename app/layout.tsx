@@ -10,6 +10,7 @@ import { getServerSession } from "next-auth";
 import { AuthProvider } from "@/lib/SessionProvider";
 import { authOptions } from "@/server/auth";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,6 +48,7 @@ export default async function RootLayout({
           </QueryProvider>
         </AuthProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -27,6 +27,7 @@
     "@tanstack/react-query-devtools": "^5.13.3",
     "@uidotdev/usehooks": "^2.4.1",
     "@vercel/analytics": "^1.1.1",
+    "@vercel/speed-insights": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "interweave": "^13.1.0",
