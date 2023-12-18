@@ -8,7 +8,7 @@ import VolumeControls from "./VolumeControls";
 import Timeline from "./Timeline";
 import SpeedController from "./SpeedController";
 import EpisodeImage from "./EpisodeImage";
-import PlaybackQueue from "./PlaybackQueue";
+import PlaybackQueue from "./PlaybackQueue/PlaybackQueue";
 
 type Props = {
   className?: string;
