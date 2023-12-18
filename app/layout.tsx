@@ -9,6 +9,7 @@ import { QueryProvider } from "@/lib/QueryProvider";
 import { getServerSession } from "next-auth";
 import { AuthProvider } from "@/lib/SessionProvider";
 import { authOptions } from "@/server/auth";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,6 +46,7 @@ export default async function RootLayout({
             </ThemeProvider>
           </QueryProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
