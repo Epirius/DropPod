@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { Button } from "../ui/button";
@@ -32,6 +33,7 @@ import { set, z } from "zod";
 import { EpisodeData, zEpisodeData, zMetaData } from "@/@types/podcastTypes";
 import Image from "next/image";
 import { Cross2Icon, DragHandleHorizontalIcon } from "@radix-ui/react-icons";
+import { Skeleton } from "../ui/skeleton";
 
 export type PlaybackQueueItem = {
   podcastGuid: string;
@@ -250,6 +252,28 @@ const QueueItem = ({
     transition,
     transform: CSS.Transform.toString(transform),
   };
+
+  if (isLoading || podcastIsLoading)
+    return (
+      <div style={style} {...attributes}>
+        <div className="flex w-full items-center gap-1">
+          <Skeleton className="h-8 w-8 shrink-0 rounded-md" />
+          <div className="flex w-full flex-col justify-between gap-1">
+            <Skeleton className="h-3 w-full rounded-sm" />
+            <Skeleton className="h-3 max-w-[6rem] rounded-sm" />
+          </div>
+          <div
+            className="mr-1 flex shrink-0 gap-2"
+            ref={setNodeRef}
+            {...listeners}
+          >
+            <Skeleton className="h-10 w-10 rounded-md" />
+            <Skeleton className="h-10 w-10 rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+
   return (
     <div style={style} {...attributes}>
       <div className="flex items-center gap-1">
