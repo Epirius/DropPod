@@ -79,6 +79,7 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
       if (!data) throw new Error("Data parsing was not ok");
       return data;
     },
+    enabled: !!queue[0],
     staleTime: 60 * 1000 * 24,
   });
 
@@ -135,14 +136,15 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
 
     const removePlayingEpisode = () => {
       const episodeUrl = player.currentSrc;
-      deleteItem(episodeUrl);
+      const newQueue = queue.filter((i) => i.episodeUrl !== episodeUrl);
+      setQueue(newQueue);
     };
 
     player.addEventListener("loadedmetadata", removePlayingEpisode);
     return () => {
       player.removeEventListener("loadedmetadata", removePlayingEpisode);
     };
-  }, [deleteItem, playerRef]);
+  }, [playerRef, queue, setQueue]);
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
