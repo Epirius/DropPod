@@ -76,15 +76,15 @@ const EpisodeItem = ({ data, podcastSlug }: EpisodeItemProps) => {
   };
 
   const addToPlaybackQueue = (position: "front" | "back") => {
-    if (!guid) {
-      console.error("guid is undefined for: ", title);
+    if (!audio_url) {
+      console.error("audio_url is undefined for: ", title);
       return;
     }
     const event: WindowEventMap["pushToPlaybackQueue"] = new CustomEvent(
       "pushToPlaybackQueue",
       {
         detail: {
-          item: { podcastGuid: podcastSlug, episodeGuid: guid },
+          item: { podcastGuid: podcastSlug, episodeUrl: audio_url },
           position,
         },
       },

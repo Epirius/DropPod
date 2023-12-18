@@ -37,7 +37,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export type PlaybackQueueItem = {
   podcastGuid: string;
-  episodeGuid: string;
+  episodeUrl: string;
 };
 
 type PlaybackQueueProps = {
@@ -55,10 +55,8 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
     const pushToQueue = ({
       detail: { item, position },
     }: WindowEventMap["pushToPlaybackQueue"]) => {
-      const { podcastGuid, episodeGuid } = item;
-      const filteredQueue = queue.filter(
-        (item) => item.episodeGuid !== episodeGuid,
-      );
+      const { podcastGuid, episodeUrl } = item;
+      const filteredQueue = queue.filter((i) => i.episodeUrl !== episodeUrl);
       if (position === "front") {
         setQueue([item, ...filteredQueue]);
       } else {
@@ -72,7 +70,7 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
   }, [queue, setQueue]);
 
   const deleteItem = (item: PlaybackQueueItem) => {
-    const newQueue = queue.filter((i) => i.episodeGuid !== item.episodeGuid);
+    const newQueue = queue.filter((i) => i.episodeUrl !== item.episodeUrl);
     setQueue(newQueue);
   };
 
@@ -101,7 +99,7 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
             clearInterval(intervalId);
             if (!firstEpisode.data || firstEpisode.error) reject("no data");
             const episode = firstEpisode.data?.find(
-              (e) => e.guid === nextEpisode.episodeGuid,
+              (e) => e.audio_url === nextEpisode.episodeUrl,
             );
             if (!episode) {
               reject("no episode");
@@ -138,8 +136,8 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = queue.findIndex((i) => i.episodeGuid === active.id);
-      const newIndex = queue.findIndex((i) => i.episodeGuid === over?.id);
+      const oldIndex = queue.findIndex((i) => i.episodeUrl === active.id);
+      const newIndex = queue.findIndex((i) => i.episodeUrl === over?.id);
       const newQueue = [...queue];
       const item = newQueue.splice(oldIndex, 1);
       if (item.length < 1) {
@@ -191,12 +189,12 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
               autoScroll={{ threshold: { x: 0, y: 0.2 } }}
             >
               <SortableContext
-                items={queue.map((item) => item.episodeGuid)}
+                items={queue.map((item) => item.episodeUrl)}
                 strategy={verticalListSortingStrategy}
               >
                 {queue.map((item) => (
                   <QueueItem
-                    key={item.episodeGuid}
+                    key={item.episodeUrl}
                     item={item}
                     deleteItem={deleteItem}
                   />
@@ -244,10 +242,10 @@ const QueueItem = ({
     },
     staleTime: 60 * 1000 * 24,
   });
-  const episode = data?.find((e) => e.guid === item.episodeGuid);
+  const episode = data?.find((e) => e.audio_url === item.episodeUrl);
 
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: item.episodeGuid });
+    useSortable({ id: item.episodeUrl });
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
