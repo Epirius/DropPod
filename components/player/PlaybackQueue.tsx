@@ -40,9 +40,10 @@ export type PlaybackQueueItem = {
 
 type PlaybackQueueProps = {
   playerRef: React.RefObject<HTMLAudioElement>;
+  className?: string;
 };
 
-const PlaybackQueue = ({ playerRef }: PlaybackQueueProps) => {
+const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
   const [queue, setQueue] = useLocalStorage(
     "playbackQueue",
     [] as PlaybackQueueItem[],
@@ -166,42 +167,44 @@ const PlaybackQueue = ({ playerRef }: PlaybackQueueProps) => {
   );
 
   return (
-    <Dialog>
-      <TooltipWrapper text="playback queue">
-        <DialogTrigger asChild>
-          <Button variant="secondary" className="rounded-full">
-            <LayersIcon />
-          </Button>
-        </DialogTrigger>
-      </TooltipWrapper>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Playing next</DialogTitle>
-        </DialogHeader>
-        {queue.length < 1 && <p>Queue is empty</p>}
-        <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-auto">
-          <DndContext
-            collisionDetection={closestCenter}
-            onDragEnd={onDragEnd}
-            sensors={sensors}
-            autoScroll={{ threshold: { x: 0, y: 0.2 } }}
-          >
-            <SortableContext
-              items={queue.map((item) => item.episodeGuid)}
-              strategy={verticalListSortingStrategy}
+    <div className={className}>
+      <Dialog>
+        <TooltipWrapper text="playback queue">
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="rounded-full">
+              <LayersIcon />
+            </Button>
+          </DialogTrigger>
+        </TooltipWrapper>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Playing next</DialogTitle>
+          </DialogHeader>
+          {queue.length < 1 && <p>Queue is empty</p>}
+          <div className="relative flex max-h-[80vh] flex-col gap-2 overflow-y-auto">
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={onDragEnd}
+              sensors={sensors}
+              autoScroll={{ threshold: { x: 0, y: 0.2 } }}
             >
-              {queue.map((item) => (
-                <QueueItem
-                  key={item.episodeGuid}
-                  item={item}
-                  deleteItem={deleteItem}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        </div>
-      </DialogContent>
-    </Dialog>
+              <SortableContext
+                items={queue.map((item) => item.episodeGuid)}
+                strategy={verticalListSortingStrategy}
+              >
+                {queue.map((item) => (
+                  <QueueItem
+                    key={item.episodeGuid}
+                    item={item}
+                    deleteItem={deleteItem}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

@@ -74,7 +74,10 @@ const Player = ({ className }: Props) => {
         autoPlay
       />
       <div className="grid-rows-[2fr 1fr] grid h-full w-full grid-cols-5 items-center justify-items-center">
-        <PlaybackQueue playerRef={player} />
+        <PlaybackQueue
+          playerRef={player}
+          className="col-start-1 self-end sm:row-span-2 sm:self-center"
+        />
         <SpeedController
           playerRef={player}
           className="col-start-2 self-end pb-2"
@@ -84,10 +87,13 @@ const Player = ({ className }: Props) => {
           handlePlayButtonClick={handlePlayButtonClick}
           className="col-start-3 self-end"
         />
-        <VolumeControls playerRef={player} className="self-end pb-[0.7rem]" />
+        <VolumeControls
+          playerRef={player}
+          className="hidden self-end pb-[0.7rem] sm:flex"
+        />
         <EpisodeImage
           episodeData={episodeData}
-          className="col-start-4 sm:col-start-5 sm:row-span-2 sm:mr-4 sm:h-20 sm:w-20 sm:justify-self-end"
+          className="col-start-4 self-end sm:col-start-5 sm:row-span-2 sm:mr-4 sm:h-20 sm:w-20 sm:self-center sm:justify-self-end"
         />
         <Timeline
           playerRef={player}
