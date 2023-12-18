@@ -1,5 +1,5 @@
 "use client";
-import { zMetaData } from "@/types/podcastTypes";
+import { zMetaData } from "@/@types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import Spinner from "../ui/spinner";

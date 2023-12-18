@@ -1,5 +1,5 @@
 import React from "react";
-import { MetaData } from "@/types/podcastTypes";
+import { MetaData } from "@/@types/podcastTypes";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
 import Link from "next/link";

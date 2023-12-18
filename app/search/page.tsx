@@ -1,5 +1,5 @@
 "use client";
-import { MetaData, zMetaData } from "@/types/podcastTypes";
+import { MetaData, zMetaData } from "@/@types/podcastTypes";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";

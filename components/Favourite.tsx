@@ -4,10 +4,11 @@ import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { zMetaData } from "@/types/podcastTypes";
+import { zMetaData } from "@/@types/podcastTypes";
 import Spinner from "./ui/spinner";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { TooltipWrapper } from "./ui/tooltip";
 
 interface Props {
   podcastGuid?: string;
@@ -70,31 +71,37 @@ const Favourite = ({ podcastGuid, className }: Props) => {
     .includes(podcastGuid);
 
   return (
-    <Button
-      className={cn(
-        "group flex h-12 w-12 items-center justify-center rounded-full text-2xl font-semibold",
-        className,
-      )}
-      variant="secondary"
-      disabled={favouriteList.status !== "success"}
-      onClick={() => mutateFavourite.mutate(isFav)}
-      aria-label={
-        isFav ? "remove podcast from favourites" : "add podcast to favourites"
+    <TooltipWrapper
+      text={
+        isFav ? "Remove podcast from favourites" : "Add podcast to favourites"
       }
     >
-      {favouriteList.status === "error" && !favouriteList.isFetching && (
-        <p>ERROR</p>
-      )}
-      {favouriteList.status === "success" &&
-        !favouriteList.isFetching &&
-        isFav && <HeartFilledIcon className="group-hover:text-red-300" />}
-      {favouriteList.status === "success" &&
-        !favouriteList.isFetching &&
-        !isFav && <HeartIcon className=" group-hover:text-green-300" />}
-      {(favouriteList.isFetching ||
-        favouriteList.status === "pending" ||
-        favouriteList.isLoading) && <Spinner size="xs" thickness="sm" />}
-    </Button>
+      <Button
+        className={cn(
+          "group flex h-12 w-12 items-center justify-center rounded-full text-2xl font-semibold",
+          className,
+        )}
+        variant="secondary"
+        disabled={favouriteList.status !== "success"}
+        onClick={() => mutateFavourite.mutate(isFav)}
+        aria-label={
+          isFav ? "remove podcast from favourites" : "add podcast to favourites"
+        }
+      >
+        {favouriteList.status === "error" && !favouriteList.isFetching && (
+          <p>ERROR</p>
+        )}
+        {favouriteList.status === "success" &&
+          !favouriteList.isFetching &&
+          isFav && <HeartFilledIcon className="group-hover:text-red-300" />}
+        {favouriteList.status === "success" &&
+          !favouriteList.isFetching &&
+          !isFav && <HeartIcon className=" group-hover:text-green-300" />}
+        {(favouriteList.isFetching ||
+          favouriteList.status === "pending" ||
+          favouriteList.isLoading) && <Spinner size="xs" thickness="sm" />}
+      </Button>
+    </TooltipWrapper>
   );
 };
 

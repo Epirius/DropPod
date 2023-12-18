@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MetaData, zMetaData } from "@/types/podcastTypes";
+import { MetaData, zMetaData } from "@/@types/podcastTypes";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 

@@ -1,12 +1,18 @@
 "use client";
 import React, { useEffect } from "react";
 import Spinner from "../ui/spinner";
-import { EpisodeData, zEpisodeData } from "@/types/podcastTypes";
+import { EpisodeData, zEpisodeData } from "@/@types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import PlayButton from "../player/PlayButton";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
+import { CardStackPlusIcon } from "@radix-ui/react-icons";
+import { TooltipWrapper } from "../ui/tooltip";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { PinTopIcon, PinBottomIcon } from "@radix-ui/react-icons";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const { data, isLoading, error } = useQuery({
@@ -24,10 +30,10 @@ const EpisodeList = ({ slug }: { slug: string }) => {
     <div>
       <Separator />
       {data.map((episode) => (
-        <>
-          <EpisodeItem data={episode} key={episode.guid} />
+        <div key={episode.guid}>
+          <EpisodeItem data={episode} podcastSlug={slug} />
           <Separator />
-        </>
+        </div>
       ))}
     </div>
   );
@@ -37,20 +43,19 @@ export default EpisodeList;
 
 type EpisodeItemProps = {
   data: EpisodeData;
+  podcastSlug: string;
 };
 
-const EpisodeItem = ({ data }: EpisodeItemProps) => {
+const EpisodeItem = ({ data, podcastSlug }: EpisodeItemProps) => {
   const { episode, title, date, audio_url, guid, season, description } = data;
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   useEffect(() => {
-    const handlePlaying = (event: Event) => {
-      const e = event as CustomEvent<EpisodeData>;
-      setIsPlaying(e.detail.audio_url === data.audio_url);
+    const handlePlaying = ({ detail }: CustomEvent<EpisodeData>) => {
+      setIsPlaying(detail.audio_url === data.audio_url);
     };
 
-    const handlePause = (event: Event) => {
-      const e = event as CustomEvent<EpisodeData>;
+    const handlePause = (_event: CustomEvent<EpisodeData>) => {
       setIsPlaying(false);
     };
 
@@ -64,10 +69,27 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
 
   const handleClick = () => {
     window.dispatchEvent(
-      new CustomEvent("updateEpisodeData", {
+      new CustomEvent<EpisodeData>("updateEpisodeData", {
         detail: data,
       }),
     );
+  };
+
+  const addToPlaybackQueue = (position: "front" | "back") => {
+    if (!audio_url) {
+      console.error("audio_url is undefined for: ", title);
+      return;
+    }
+    const event: WindowEventMap["pushToPlaybackQueue"] = new CustomEvent(
+      "pushToPlaybackQueue",
+      {
+        detail: {
+          item: { podcastGuid: podcastSlug, episodeUrl: audio_url },
+          position,
+        },
+      },
+    );
+    window.dispatchEvent(event);
   };
 
   return (
@@ -84,9 +106,42 @@ const EpisodeItem = ({ data }: EpisodeItemProps) => {
         </Badge>
       )}
       <p className="text-sm  sm:text-base md:text-lg">{title}</p>
-      <div className="ml-auto flex items-center gap-8">
+      <div className="ml-auto flex items-center gap-6">
+        <Dialog>
+          <TooltipWrapper text="Add to queue">
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <CardStackPlusIcon />
+              </Button>
+            </DialogTrigger>
+          </TooltipWrapper>
+          <DialogContent>
+            <div className="flex flex-col gap-4 px-8 py-4">
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="flex gap-2"
+                  onClick={() => addToPlaybackQueue("front")}
+                >
+                  <PinTopIcon />
+                  <p>Add to next</p>
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  variant="secondary"
+                  className="flex gap-2"
+                  onClick={() => addToPlaybackQueue("back")}
+                >
+                  <PinBottomIcon />
+                  <p>Add to last</p>
+                </Button>
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
         {date && (
-          <p className="hidden md:block">
+          <p className="hidden w-16 md:block">
             {new Date(date).toLocaleString("en-US", {
               month: "short",
               day: "2-digit",
