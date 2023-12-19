@@ -45,6 +45,7 @@ const PodcastCard = ({
               sizes="15rem"
               className=" aspect-square transition duration-100 ease-in-out group-hover:scale-105"
               priority={true}
+              unoptimized={true}
             />
           </div>
           <div className={clsx(variant === "list" && "pl-4")}>

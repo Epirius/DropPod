@@ -38,6 +38,7 @@ const Header = ({ className }: Props) => {
             height={50}
             alt="droppod logo"
             className="h-[50px] w-[50px]"
+            unoptimized={true}
           />
           <h1 className="hidden sm:block">DropPod</h1>
         </div>

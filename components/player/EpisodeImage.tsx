@@ -26,6 +26,7 @@ const EpisodeImage = ({ episodeData, className }: EpisodeInfoProps) => {
           height={100}
           onError={() => setHidden(true)}
           className="rounded-md"
+          unoptimized={true}
         />
       )}
     </div>

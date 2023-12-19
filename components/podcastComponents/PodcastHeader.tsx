@@ -27,6 +27,7 @@ const PodcastHeader = ({ slug }: { slug: string }) => {
         height={300}
         className="h-40 w-40 self-center rounded-xl sm:h-80 sm:w-80 md:self-start"
         priority
+        unoptimized={true}
       />
       <div className="flex flex-col gap-4">
         <h1 className="self-center text-center text-3xl font-bold md:self-start md:text-left">

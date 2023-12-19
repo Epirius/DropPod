@@ -98,6 +98,7 @@ const QueueItem = ({
           width={30}
           height={30}
           className="aspect-square h-8 w-8 shrink-0 rounded-md"
+          unoptimized={true}
         />
         {episode?.title}
         <div className="ml-auto mr-1 flex shrink-0 gap-2">
