@@ -21,5 +21,10 @@ export const zMetaData = z.object({
   language_code: z.string(),
 });
 
+export const zFrontPageData = z.object({
+  editors_choice: z.array(zMetaData),
+  popular: z.array(zMetaData),
+});
+
 export type MetaData = z.infer<typeof zMetaData>;
 export type EpisodeData = z.infer<typeof zEpisodeData>;
