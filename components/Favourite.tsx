@@ -17,24 +17,31 @@ interface Props {
 
 const Favourite = ({ podcastGuid, className }: Props) => {
   const session = useSession();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const favouriteList = useQuery({
     queryKey: ["favourite", session.data?.user?.id],
     staleTime: 60 * 1000 * 5,
-    queryFn: () =>
-      fetch(`/api2/subscribe`, {
+    retry: session.status === "authenticated" ? 3 : false,
+    queryFn: async () => {
+      if (session.status !== "authenticated") {
+        return Promise.reject(new Error("not authenticated"));
+      }
+      return fetch(`/api2/subscribe`, {
         credentials: "include",
       })
         .then((res) => res.json())
-        .then((res) => zMetaData.array().parse(res)),
+        .then((res) => zMetaData.array().parse(res))
+        .catch((err) => {
+          console.error(err);
+          throw err;
+        });
+    },
   });
 
   const mutateFavourite = useMutation({
     mutationFn: (isFav?: boolean) => {
       if (session.status !== "authenticated") {
-        void router.push("/login");
         return Promise.reject("not authenticated");
       }
       if (!podcastGuid || isFav === undefined) {
@@ -88,18 +95,16 @@ const Favourite = ({ podcastGuid, className }: Props) => {
           isFav ? "remove podcast from favourites" : "add podcast to favourites"
         }
       >
-        {favouriteList.status === "error" && !favouriteList.isFetching && (
-          <p>ERROR</p>
+        {favouriteList.isPending && <Spinner size="xs" thickness="sm" />}
+        {favouriteList.isError && (
+          <HeartIcon className=" group-hover:text-green-300" />
         )}
-        {favouriteList.status === "success" &&
-          !favouriteList.isFetching &&
-          isFav && <HeartFilledIcon className="group-hover:text-red-300" />}
-        {favouriteList.status === "success" &&
-          !favouriteList.isFetching &&
-          !isFav && <HeartIcon className=" group-hover:text-green-300" />}
-        {(favouriteList.isFetching ||
-          favouriteList.status === "pending" ||
-          favouriteList.isLoading) && <Spinner size="xs" thickness="sm" />}
+        {favouriteList.isSuccess &&
+          (isFav ? (
+            <HeartFilledIcon className="group-hover:text-red-300" />
+          ) : (
+            <HeartIcon className=" group-hover:text-green-300" />
+          ))}
       </Button>
     </TooltipWrapper>
   );
