@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Spinner from "../ui/spinner";
 import { EpisodeData, zEpisodeData } from "@/@types/podcastTypes";
 import { useQuery } from "@tanstack/react-query";
@@ -13,8 +13,12 @@ import { TooltipWrapper } from "../ui/tooltip";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { PinTopIcon, PinBottomIcon } from "@radix-ui/react-icons";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { useReadLocalStorage } from "usehooks-ts";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
+  const [reverse, setReverse] = useState<boolean>(
+    useReadLocalStorage<boolean>(`reverse:${slug}`) ?? false,
+  );
   const { data, isLoading, error } = useQuery({
     queryKey: ["podcastPage", "episode", slug],
     queryFn: async () => {
@@ -26,10 +30,24 @@ const EpisodeList = ({ slug }: { slug: string }) => {
     },
   });
   if (!data) return <Spinner />;
+  const displayData = reverse ? [...data].reverse() : data;
+
+  const handleReverse = () => {
+    if (reverse) {
+      localStorage.removeItem(`reverse:${slug}`);
+      setReverse(false);
+    } else {
+      localStorage.setItem(`reverse:${slug}`, "true");
+      setReverse(true);
+    }
+  };
   return (
-    <div>
+    <div className="flex flex-col">
+      <Button variant="ghost" className="self-end" onClick={handleReverse}>
+        Reverse order
+      </Button>
       <Separator />
-      {data.map((episode) => (
+      {displayData.map((episode) => (
         <div key={episode.guid}>
           <EpisodeItem data={episode} podcastSlug={slug} />
           <Separator />
