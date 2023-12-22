@@ -4,6 +4,7 @@ import PodcastDisplay from "@/components/PodcastDisplay";
 export default async function Home() {
   const data = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/podcast/frontpage`,
+    { next: { revalidate: 3600 } },
   )
     .then((res) => res.json())
     .then((res) => zFrontPageData.parse(res));
