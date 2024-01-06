@@ -28,4 +28,5 @@ pnpm dev
 ```
 
 ## License
-This project is published under a MIT License
+[<img src="https://img.shields.io/badge/license-MIT-green"/>](https://choosealicense.com/licenses/mit/)
+ This project is published under an MIT license 
