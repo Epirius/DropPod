@@ -7,8 +7,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zMetaData } from "@/@types/podcastTypes";
 import Spinner from "./ui/spinner";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+import { cn, zodFetch } from "@/lib/utils";
 import { TooltipWrapper } from "./ui/tooltip";
+import { z } from "zod";
 
 interface Props {
   podcastGuid?: string;
@@ -27,15 +28,12 @@ const Favourite = ({ podcastGuid, className }: Props) => {
       if (session.status !== "authenticated") {
         return Promise.reject(new Error("not authenticated"));
       }
-      return fetch(`/api2/subscribe`, {
+      return zodFetch(`/api2/subscribe`, z.array(zMetaData), {
         credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((res) => zMetaData.array().parse(res))
-        .catch((err) => {
-          console.error(err);
-          throw err;
-        });
+      }).catch((err) => {
+        console.error(err);
+        throw err;
+      });
     },
   });
 

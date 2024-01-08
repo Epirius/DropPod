@@ -9,6 +9,8 @@ import PodcastDisplay from "@/components/PodcastDisplay";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
+import { zodFetch } from "@/lib/utils";
+import { z } from "zod";
 
 const Search = () => {
   const router = useRouter();
@@ -39,10 +41,10 @@ const Search = () => {
     page: number,
   ): Promise<MetaData[]> => {
     if (searchTerm.length === 0) return [];
-    const res = await fetch(
+    return zodFetch(
       `/api2/podcast/search?search=${searchTerm}&page_length=${page_length}&page_number=${page}`,
+      z.array(zMetaData),
     );
-    return zMetaData.array().parse(await res.json());
   };
 
   const debouncedSearchInput = useDebounce(

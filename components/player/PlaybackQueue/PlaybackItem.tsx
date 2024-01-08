@@ -14,6 +14,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Skeleton } from "../../ui/skeleton";
 import { PlaybackQueueItem } from "./PlaybackQueue";
+import { zodFetch } from "@/lib/utils";
 
 const QueueItem = ({
   item,
@@ -28,25 +29,18 @@ const QueueItem = ({
     error: podcastError,
   } = useQuery({
     queryKey: ["PlaybackQueue", "podcast", item.podcastGuid],
-    queryFn: async () => {
-      const res = await fetch(`/api2/podcast/meta/${item.podcastGuid}`);
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = zMetaData.parse(await res.json());
-      if (!data) throw new Error("Data parsing was not ok");
-      return data;
-    },
+    queryFn: async () =>
+      zodFetch(`/api2/podcast/meta/${item.podcastGuid}`, zMetaData),
     staleTime: 60 * 1000 * 24,
   });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["PlaybackQueue", "episode", item.podcastGuid],
-    queryFn: async () => {
-      const res = await fetch(`/api2/podcast/episode/${item.podcastGuid}`);
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = z.array(zEpisodeData).parse(await res.json());
-      if (!data) throw new Error("Data parsing was not ok");
-      return data;
-    },
+    queryFn: async () =>
+      zodFetch(
+        `/api2/podcast/episode/${item.podcastGuid}`,
+        z.array(zEpisodeData),
+      ),
     staleTime: 60 * 1000 * 24,
   });
   const episode = data?.find((e) => e.audio_url === item.episodeUrl);

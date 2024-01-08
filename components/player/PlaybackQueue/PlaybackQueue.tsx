@@ -30,6 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { EpisodeData, zEpisodeData } from "@/@types/podcastTypes";
 import QueueItem from "./PlaybackItem";
+import { zodFetch } from "@/lib/utils";
 
 export type PlaybackQueueItem = {
   podcastGuid: string;
@@ -72,13 +73,11 @@ const PlaybackQueue = ({ playerRef, className }: PlaybackQueueProps) => {
 
   const firstEpisode = useQuery({
     queryKey: ["PlaybackQueue", "episode", queue[0]?.podcastGuid],
-    queryFn: async () => {
-      const res = await fetch(`/api2/podcast/episode/${queue[0]?.podcastGuid}`);
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = z.array(zEpisodeData).parse(await res.json());
-      if (!data) throw new Error("Data parsing was not ok");
-      return data;
-    },
+    queryFn: async () =>
+      zodFetch(
+        `/api2/podcast/episode/${queue[0]?.podcastGuid}`,
+        z.array(zEpisodeData),
+      ),
     enabled: !!queue[0],
     staleTime: 60 * 1000 * 24,
   });
