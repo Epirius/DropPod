@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { z } from "zod";
+import { zodFetch } from "@/lib/utils";
 
 const FavouritePage = () => {
   const router = useRouter();
@@ -21,11 +22,9 @@ const FavouritePage = () => {
     queryKey: ["favourite", session.data?.user?.id],
     staleTime: 60 * 1000 * 5,
     queryFn: () =>
-      fetch(`/api2/subscribe`, {
+      zodFetch(`/api2/subscribe`, z.array(zMetaData), {
         credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((res) => z.array(zMetaData).parse(res)),
+      }),
   });
   return (
     <div>

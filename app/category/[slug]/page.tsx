@@ -6,6 +6,8 @@ import { MetaData, zMetaData } from "@/@types/podcastTypes";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
+import { zodFetch } from "@/lib/utils";
+import { z } from "zod";
 
 type CategoryPageProps = {
   params: { slug: string };
@@ -37,10 +39,10 @@ const CategoryPage = ({ params }: CategoryPageProps) => {
     page: number,
   ): Promise<MetaData[]> => {
     const languageCode = "en";
-    const res = await fetch(
+    return zodFetch(
       `/api2/podcast/list?category=${slug}&lang=${languageCode}&page_length=${page_length}&page_number=${page}`,
+      z.array(zMetaData),
     );
-    return zMetaData.array().parse(await res.json());
   };
 
   if (!(Object.values(Category) as string[]).includes(slug)) {

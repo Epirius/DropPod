@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { PinTopIcon, PinBottomIcon } from "@radix-ui/react-icons";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useReadLocalStorage } from "usehooks-ts";
+import { zodFetch } from "@/lib/utils";
 
 const EpisodeList = ({ slug }: { slug: string }) => {
   const [reverse, setReverse] = useState<boolean>(
@@ -21,13 +22,8 @@ const EpisodeList = ({ slug }: { slug: string }) => {
   );
   const { data, isLoading, error } = useQuery({
     queryKey: ["podcastPage", "episode", slug],
-    queryFn: async () => {
-      const res = await fetch(`/api2/podcast/episode/${slug}`);
-      if (!res.ok) throw new Error("Network response was not ok");
-      const data = z.array(zEpisodeData).parse(await res.json());
-      if (!data) throw new Error("Data parsing was not ok");
-      return data;
-    },
+    queryFn: async () =>
+      zodFetch(`/api2/podcast/episode/${slug}`, z.array(zEpisodeData)),
   });
   if (!data) return <Spinner />;
   const displayData = reverse ? [...data].reverse() : data;
